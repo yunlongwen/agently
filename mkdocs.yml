@@ -63,11 +63,6 @@ theme:
 
 plugins:
   - search
-  - minify
-  - git-revision-date-localized
-  - git-committers:
-      repository: yunlongwen/agently
-      branch: master
 
 markdown_extensions:
   - pymdownx.superfences
@@ -84,5 +79,3 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/yunlongwen/agently
-  version:
-    provider: mike
