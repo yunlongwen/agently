@@ -1,0 +1,88 @@
+site_name: Agently
+site_url: https://yunlongwen.github.io/agently
+site_description: Agently - AI驱动的编程助手
+site_author: Agently Team
+
+repo_url: https://github.com/yunlongwen/agently
+repo_name: yunlongwen/agently
+
+docs_dir: docs
+site_dir: site
+
+nav:
+  - 首页: index.md
+  - 快速开始:
+    - 项目简介: user/introduction.md
+    - 安装指南: user/installation.md
+    - 快速入门: user/quickstart.md
+  - 用户指南:
+    - CLI 使用: user/cli_usage.md
+    - 命令参考: user/cli_reference.md
+    - 常见问题: user/faq.md
+  - 架构设计:
+    - 系统架构: architecture.md
+    - 智能体层: agent_layer/agent_architecture.md
+    - CLI 层: cli_layer/cli_architecture.md
+    - 协调层: orchestrator_layer/orchestrator_architecture.md
+    - 核心能力层: core_services_layer/core_services_architecture.md
+    - 基础设施层: infrastructure_layer/infrastructure_architecture.md
+  - 技术文档:
+    - 需求文档: requirements.md
+    - 技术选型: tech_selection.md
+    - 开发指南: developer_skills/AGENTIC_CODING_BEST_PRACTICES.md
+    - 文档部署: documentation_guide.md
+
+theme:
+  name: material
+  language: zh
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.integrate
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+
+plugins:
+  - search
+  - minify
+  - git-revision-date-localized
+  - git-committers:
+      repository: yunlongwen/agently
+      branch: master
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist
+  - admonition
+  - attr_list
+  - md_in_html
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/yunlongwen/agently
+  version:
+    provider: mike
