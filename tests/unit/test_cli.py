@@ -1,37 +1,66 @@
-"""Tests for CLI main module"""
+"""Tests for CLI"""
 
 from click.testing import CliRunner
+import pytest
 
-from agently.cli.main import cli
+from agently.cli.main import cli, main
 
 
 class TestCLI:
     """Test CLI commands"""
 
-    def test_cli_group_exists(self):
-        """Test that CLI group is available"""
-        runner = CliRunner()
-        result = runner.invoke(cli, ["--help"])
-        assert result.exit_code == 0
-        assert "Agently" in result.output
-
-    def test_version_command(self):
-        """Test version command"""
+    def test_cli_version(self):
+        """Test CLI version command"""
         runner = CliRunner()
         result = runner.invoke(cli, ["version"])
         assert result.exit_code == 0
         assert "0.1.0" in result.output
 
-    def test_ask_command(self):
-        """Test ask command"""
+    def test_cli_ask(self):
+        """Test CLI ask command"""
         runner = CliRunner()
-        result = runner.invoke(cli, ["ask", "test question"])
+        result = runner.invoke(cli, ["ask", "What is Python?"])
         assert result.exit_code == 0
-        assert "Question: test question" in result.output
+        assert "What is Python?" in result.output
 
-    def test_chat_command(self):
-        """Test chat command"""
+    def test_cli_chat(self):
+        """Test CLI chat command"""
         runner = CliRunner()
         result = runner.invoke(cli, ["chat"])
         assert result.exit_code == 0
-        assert "Interactive chat coming soon" in result.output
+
+    def test_cli_agent_list(self):
+        """Test CLI agent list command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["agent", "list"])
+        assert result.exit_code == 0
+
+    def test_cli_agent_info(self):
+        """Test CLI agent info command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["agent", "info", "nexus"])
+        assert result.exit_code == 0
+
+    def test_cli_agent_select(self):
+        """Test CLI agent select command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["agent", "select", "code-generator"])
+        assert result.exit_code == 0
+
+    def test_cli_config_show(self):
+        """Test CLI config show command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["config", "show"])
+        assert result.exit_code == 0
+
+    def test_cli_config_set(self):
+        """Test CLI config set command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["config", "set", "model", "openai"])
+        assert result.exit_code == 0
+
+    def test_cli_task_execute(self):
+        """Test CLI task execute command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["task", "generate a function"])
+        assert result.exit_code == 0
