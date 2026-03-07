@@ -7,6 +7,8 @@ import pytest
 from pydantic import ValidationError
 
 from agently.config import Settings, get_settings, reset_settings
+
+
 class TestSettings:
     """Test Settings class"""
 
