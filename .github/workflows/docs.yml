@@ -49,6 +49,6 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.AGENT_DOC_TOKEN }}
+          github_token: ${{ secrets.AGENTLY_DOC_TOKEN }}
           publish_dir: ./site
           publish_branch: gh-pages
