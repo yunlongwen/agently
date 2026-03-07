@@ -1,0 +1,3536 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agently - AI驱动的编程助手">
+      
+      
+        <meta name="author" content="Agently Team">
+      
+      
+        <link rel="canonical" href="https://yunlongwen.github.io/agently/infrastructure_layer/infrastructure_architecture/">
+      
+      
+        <link rel="prev" href="../../core_services_layer/core_services_architecture/">
+      
+      
+        <link rel="next" href="../../requirements/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>基础设施层 - Agently</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agently" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Agently" class="md-header__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Agently
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              基础设施层
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/introduction/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  快速开始
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/cli_usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  用户指南
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  架构设计
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../requirements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  技术文档
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Agently" class="md-nav__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Agently
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    快速开始
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目简介
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速入门
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用户指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    用户指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 使用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    命令参考
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构设计
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    架构设计
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    系统架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent_layer/agent_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    智能体层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli_layer/cli_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../orchestrator_layer/orchestrator_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协调层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core_services_layer/core_services_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    核心能力层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施层
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文档说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础设施层架构概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 文件系统服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. 文件系统服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        目录管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件监控
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件缓存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Git 集成服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Git 集成服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git 操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        仓库管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分支管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        提交管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差异分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git 工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 测试服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 测试服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试发现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试执行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试报告
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试覆盖
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试模拟
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 存储服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 存储服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本地存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        云存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓存存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数据库存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对象存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存储工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 日志服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. 日志服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志聚合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志存储
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志搜索
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 安全服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. 安全服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        认证服务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        授权服务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加密服务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞扫描
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全监控
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 网络服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. 网络服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP 客户端
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebSocket 客户端
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API 集成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        网络监控
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        网络工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 配置服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. 配置服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置加载
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置验证
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置监控
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. 部署服务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. 部署服务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 技术实现
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.2 技术实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部署流水线
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        环境管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        包管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部署监控
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部署工具
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 性能优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础设施服务数据流
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基础设施服务数据流">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_49" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型工作流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础设施服务 API 设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基础设施服务 API 设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件系统服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git 集成服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        测试服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存储服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        日志服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        网络服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部署服务 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实施路线图
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="实施路线图">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: 基础服务
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: 核心功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: 高级功能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: 优化和扩展
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心特性对比
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术文档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    技术文档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    需求文档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tech_selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术选型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer_skills/AGENTIC_CODING_BEST_PRACTICES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开发指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文档部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="agently">Agently 基础设施层架构设计</h1>
+<h2 id="_1">文档说明</h2>
+<p>本文档详细描述 Agently 基础设施层的架构设计，包括文件系统、Git 集成、测试、存储、日志、安全、网络、配置和部署等基础设施服务。</p>
+<hr />
+<h2 id="_2">基础设施层架构概览</h2>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Infrastructure_Layer[&quot;基础设施层 (Infrastructure Layer)&quot;]
+        FILE_SYSTEM[&quot;文件系统服务&quot;]
+        GIT_INTEGRATION[&quot;Git 集成服务&quot;]
+        TEST_SERVICE[&quot;测试服务&quot;]
+        STORAGE_SERVICE[&quot;存储服务&quot;]
+        LOG_SERVICE[&quot;日志服务&quot;]
+        SECURITY_SERVICE[&quot;安全服务&quot;]
+        NETWORK_SERVICE[&quot;网络服务&quot;]
+        CONFIG_SERVICE[&quot;配置服务&quot;]
+        DEPLOY_SERVICE[&quot;部署服务&quot;]
+    end
+
+    subgraph Core_Layer[&quot;核心能力层&quot;]
+        CORE_SERVICES[&quot;核心服务&quot;]
+    end
+
+    subgraph External_Systems[&quot;外部系统&quot;]
+        EXTERNAL_STORAGE[&quot;外部存储&quot;]
+        EXTERNAL_NETWORK[&quot;外部网络&quot;]
+        EXTERNAL_SERVICES[&quot;外部服务&quot;]
+    end
+
+    Core_Layer --&gt; Infrastructure_Layer
+    Infrastructure_Layer --&gt; External_Systems
+
+    style Infrastructure_Layer fill:#f1f8e9,stroke:#388e3c,stroke-width:2px
+    style FILE_SYSTEM fill:#e3f2fd
+    style GIT_INTEGRATION fill:#e8f5e9
+    style TEST_SERVICE fill:#fff3e0
+    style STORAGE_SERVICE fill:#f3e5f5
+    style LOG_SERVICE fill:#e1f5fe
+    style SECURITY_SERVICE fill:#fff8e1
+    style NETWORK_SERVICE fill:#f3e5f5
+    style CONFIG_SERVICE fill:#e8f5e9
+    style DEPLOY_SERVICE fill:#e3f2fd
+</code></pre></div>
+<hr />
+<h2 id="1">1. 文件系统服务</h2>
+<h3 id="11">1.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph File_System[&quot;文件系统服务&quot;]
+        FILE_OPERATIONS[&quot;文件操作&quot;]
+        DIRECTORY_MANAGEMENT[&quot;目录管理&quot;]
+        FILE_WATCHER[&quot;文件监控&quot;]
+        FILE_CACHE[&quot;文件缓存&quot;]
+        FILE_UTILS[&quot;文件工具&quot;]
+    end
+
+    FILE_OPERATIONS --&gt; DIRECTORY_MANAGEMENT
+    DIRECTORY_MANAGEMENT --&gt; FILE_WATCHER
+    FILE_WATCHER --&gt; FILE_CACHE
+    FILE_CACHE --&gt; FILE_UTILS
+</code></pre></div>
+<h3 id="12">1.2 技术实现</h3>
+<h4 id="_3">文件操作</h4>
+<ul>
+<li><strong>读写操作</strong>：高效的文件读写</li>
+<li><strong>权限管理</strong>：文件权限控制</li>
+<li><strong>文件锁定</strong>：支持文件锁定机制</li>
+<li><strong>事务支持</strong>：支持文件操作事务</li>
+</ul>
+<h4 id="_4">目录管理</h4>
+<ul>
+<li><strong>目录遍历</strong>：递归遍历目录结构</li>
+<li><strong>目录监控</strong>：监控目录变化</li>
+<li><strong>路径解析</strong>：智能路径解析和规范化</li>
+<li><strong>目录操作</strong>：创建、删除、移动目录</li>
+</ul>
+<h4 id="_5">文件监控</h4>
+<ul>
+<li><strong>实时监控</strong>：实时监控文件变化</li>
+<li><strong>事件触发</strong>：基于文件变化触发事件</li>
+<li><strong>批量处理</strong>：支持批量文件操作</li>
+<li><strong>防抖机制</strong>：文件变更防抖处理</li>
+</ul>
+<h4 id="_6">文件缓存</h4>
+<ul>
+<li><strong>内存缓存</strong>：常用文件的内存缓存</li>
+<li><strong>缓存策略</strong>：智能缓存策略</li>
+<li><strong>缓存失效</strong>：自动缓存失效机制</li>
+<li><strong>性能优化</strong>：缓存性能优化</li>
+</ul>
+<h4 id="_7">文件工具</h4>
+<ul>
+<li><strong>文件搜索</strong>：快速文件搜索</li>
+<li><strong>文件比较</strong>：文件内容比较</li>
+<li><strong>文件转换</strong>：文件格式转换</li>
+<li><strong>文件压缩</strong>：文件压缩和解压缩</li>
+</ul>
+<h3 id="13">1.3 性能优化</h3>
+<ul>
+<li><strong>异步操作</strong>：异步文件操作</li>
+<li><strong>缓冲机制</strong>：文件读写缓冲</li>
+<li><strong>批量处理</strong>：批量文件操作</li>
+<li><strong>并行处理</strong>：并行文件处理</li>
+<li><strong>内存映射</strong>：大文件内存映射</li>
+</ul>
+<hr />
+<h2 id="2-git">2. Git 集成服务</h2>
+<h3 id="21">2.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Git_Integration[&quot;Git 集成服务&quot;]
+        GIT_OPERATIONS[&quot;Git 操作&quot;]
+        REPOSITORY_MANAGEMENT[&quot;仓库管理&quot;]
+        BRANCH_MANAGEMENT[&quot;分支管理&quot;]
+        COMMIT_MANAGEMENT[&quot;提交管理&quot;]
+        DIFF_ANALYSIS[&quot;差异分析&quot;]
+        GIT_UTILS[&quot;Git 工具&quot;]
+    end
+
+    GIT_OPERATIONS --&gt; REPOSITORY_MANAGEMENT
+    REPOSITORY_MANAGEMENT --&gt; BRANCH_MANAGEMENT
+    BRANCH_MANAGEMENT --&gt; COMMIT_MANAGEMENT
+    COMMIT_MANAGEMENT --&gt; DIFF_ANALYSIS
+    DIFF_ANALYSIS --&gt; GIT_UTILS
+</code></pre></div>
+<h3 id="22">2.2 技术实现</h3>
+<h4 id="git">Git 操作</h4>
+<ul>
+<li><strong>命令执行</strong>：执行 Git 命令</li>
+<li><strong>结果解析</strong>：解析 Git 命令结果</li>
+<li><strong>错误处理</strong>：Git 错误处理</li>
+<li><strong>进度跟踪</strong>：Git 操作进度跟踪</li>
+</ul>
+<h4 id="_8">仓库管理</h4>
+<ul>
+<li><strong>克隆仓库</strong>：克隆远程仓库</li>
+<li><strong>初始化仓库</strong>：初始化本地仓库</li>
+<li><strong>远程管理</strong>：管理远程仓库</li>
+<li><strong>仓库配置</strong>：配置仓库设置</li>
+</ul>
+<h4 id="_9">分支管理</h4>
+<ul>
+<li><strong>创建分支</strong>：创建新分支</li>
+<li><strong>切换分支</strong>：切换分支</li>
+<li><strong>合并分支</strong>：合并分支</li>
+<li><strong>删除分支</strong>：删除分支</li>
+</ul>
+<h4 id="_10">提交管理</h4>
+<ul>
+<li><strong>提交代码</strong>：提交代码更改</li>
+<li><strong>撤销提交</strong>：撤销错误提交</li>
+<li><strong>提交历史</strong>：查看提交历史</li>
+<li><strong>提交消息</strong>：生成和管理提交消息</li>
+</ul>
+<h4 id="_11">差异分析</h4>
+<ul>
+<li><strong>文件差异</strong>：分析文件差异</li>
+<li><strong>提交差异</strong>：分析提交差异</li>
+<li><strong>分支差异</strong>：分析分支差异</li>
+<li><strong>变更统计</strong>：统计代码变更</li>
+</ul>
+<h4 id="git_1">Git 工具</h4>
+<ul>
+<li><strong>冲突解决</strong>：辅助解决冲突</li>
+<li><strong>标签管理</strong>：管理 Git 标签</li>
+<li><strong>子模块管理</strong>：管理 Git 子模块</li>
+<li><strong>钩子管理</strong>：管理 Git 钩子</li>
+</ul>
+<h3 id="23">2.3 性能优化</h3>
+<ul>
+<li><strong>增量操作</strong>：增量 Git 操作</li>
+<li><strong>并行执行</strong>：并行 Git 命令执行</li>
+<li><strong>缓存机制</strong>：Git 操作结果缓存</li>
+<li><strong>批量处理</strong>：批量 Git 操作</li>
+<li><strong>懒加载</strong>：按需加载 Git 信息</li>
+</ul>
+<hr />
+<h2 id="3">3. 测试服务</h2>
+<h3 id="31">3.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Test_Service[&quot;测试服务&quot;]
+        TEST_DISCOVERY[&quot;测试发现&quot;]
+        TEST_EXECUTION[&quot;测试执行&quot;]
+        TEST_REPORTING[&quot;测试报告&quot;]
+        TEST_COVERAGE[&quot;测试覆盖&quot;]
+        TEST_MOCKING[&quot;测试模拟&quot;]
+        TEST_UTILS[&quot;测试工具&quot;]
+    end
+
+    TEST_DISCOVERY --&gt; TEST_EXECUTION
+    TEST_EXECUTION --&gt; TEST_REPORTING
+    TEST_REPORTING --&gt; TEST_COVERAGE
+    TEST_COVERAGE --&gt; TEST_MOCKING
+    TEST_MOCKING --&gt; TEST_UTILS
+</code></pre></div>
+<h3 id="32">3.2 技术实现</h3>
+<h4 id="_12">测试发现</h4>
+<ul>
+<li><strong>自动发现</strong>：自动发现测试文件</li>
+<li><strong>测试分类</strong>：按类型分类测试</li>
+<li><strong>测试过滤</strong>：按条件过滤测试</li>
+<li><strong>测试排序</strong>：智能测试排序</li>
+</ul>
+<h4 id="_13">测试执行</h4>
+<ul>
+<li><strong>并行执行</strong>：并行执行测试</li>
+<li><strong>增量测试</strong>：增量测试执行</li>
+<li><strong>测试重试</strong>：失败测试自动重试</li>
+<li><strong>测试超时</strong>：测试执行超时控制</li>
+</ul>
+<h4 id="_14">测试报告</h4>
+<ul>
+<li><strong>实时报告</strong>：实时测试报告</li>
+<li><strong>详细报告</strong>：详细测试结果报告</li>
+<li><strong>趋势分析</strong>：测试结果趋势分析</li>
+<li><strong>问题定位</strong>：测试失败问题定位</li>
+</ul>
+<h4 id="_15">测试覆盖</h4>
+<ul>
+<li><strong>代码覆盖</strong>：代码覆盖率分析</li>
+<li><strong>分支覆盖</strong>：分支覆盖率分析</li>
+<li><strong>路径覆盖</strong>：路径覆盖率分析</li>
+<li><strong>覆盖报告</strong>：覆盖率报告生成</li>
+</ul>
+<h4 id="_16">测试模拟</h4>
+<ul>
+<li><strong>依赖模拟</strong>：模拟外部依赖</li>
+<li><strong>行为模拟</strong>：模拟函数行为</li>
+<li><strong>数据模拟</strong>：模拟测试数据</li>
+<li><strong>环境模拟</strong>：模拟测试环境</li>
+</ul>
+<h4 id="_17">测试工具</h4>
+<ul>
+<li><strong>测试生成</strong>：自动生成测试用例</li>
+<li><strong>测试优化</strong>：优化测试执行</li>
+<li><strong>测试分析</strong>：分析测试结果</li>
+<li><strong>测试维护</strong>：维护测试用例</li>
+</ul>
+<h3 id="33">3.3 性能优化</h3>
+<ul>
+<li><strong>并行执行</strong>：多线程测试执行</li>
+<li><strong>增量测试</strong>：只执行变更相关的测试</li>
+<li><strong>测试缓存</strong>：缓存测试结果</li>
+<li><strong>资源共享</strong>：测试资源共享</li>
+<li><strong>智能调度</strong>：智能测试调度策略</li>
+</ul>
+<hr />
+<h2 id="4">4. 存储服务</h2>
+<h3 id="41">4.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Storage_Service[&quot;存储服务&quot;]
+        LOCAL_STORAGE[&quot;本地存储&quot;]
+        CLOUD_STORAGE[&quot;云存储&quot;]
+        CACHE_STORAGE[&quot;缓存存储&quot;]
+        DATABASE_STORAGE[&quot;数据库存储&quot;]
+        OBJECT_STORAGE[&quot;对象存储&quot;]
+        STORAGE_UTILS[&quot;存储工具&quot;]
+    end
+
+    LOCAL_STORAGE --&gt; CLOUD_STORAGE
+    CLOUD_STORAGE --&gt; CACHE_STORAGE
+    CACHE_STORAGE --&gt; DATABASE_STORAGE
+    DATABASE_STORAGE --&gt; OBJECT_STORAGE
+    OBJECT_STORAGE --&gt; STORAGE_UTILS
+</code></pre></div>
+<h3 id="42">4.2 技术实现</h3>
+<h4 id="_18">本地存储</h4>
+<ul>
+<li><strong>文件存储</strong>：本地文件存储</li>
+<li><strong>数据持久化</strong>：数据持久化</li>
+<li><strong>配置存储</strong>：配置文件存储</li>
+<li><strong>临时存储</strong>：临时数据存储</li>
+</ul>
+<h4 id="_19">云存储</h4>
+<ul>
+<li><strong>云服务集成</strong>：集成云存储服务</li>
+<li><strong>数据同步</strong>：本地与云存储同步</li>
+<li><strong>备份恢复</strong>：数据备份和恢复</li>
+<li><strong>版本控制</strong>：存储版本控制</li>
+</ul>
+<h4 id="_20">缓存存储</h4>
+<ul>
+<li><strong>内存缓存</strong>：内存数据缓存</li>
+<li><strong>磁盘缓存</strong>：磁盘数据缓存</li>
+<li><strong>缓存策略</strong>：智能缓存策略</li>
+<li><strong>缓存一致性</strong>：缓存数据一致性</li>
+</ul>
+<h4 id="_21">数据库存储</h4>
+<ul>
+<li><strong>数据库连接</strong>：数据库连接管理</li>
+<li><strong>数据查询</strong>：数据查询和检索</li>
+<li><strong>数据更新</strong>：数据更新和删除</li>
+<li><strong>事务管理</strong>：数据库事务管理</li>
+</ul>
+<h4 id="_22">对象存储</h4>
+<ul>
+<li><strong>对象管理</strong>：对象的创建、读取、更新、删除</li>
+<li><strong>元数据管理</strong>：对象元数据管理</li>
+<li><strong>访问控制</strong>：对象访问控制</li>
+<li><strong>数据加密</strong>：对象数据加密</li>
+</ul>
+<h4 id="_23">存储工具</h4>
+<ul>
+<li><strong>数据迁移</strong>：数据迁移工具</li>
+<li><strong>数据备份</strong>：数据备份工具</li>
+<li><strong>数据恢复</strong>：数据恢复工具</li>
+<li><strong>数据清理</strong>：数据清理工具</li>
+</ul>
+<h3 id="43">4.3 性能优化</h3>
+<ul>
+<li><strong>缓存机制</strong>：多级缓存机制</li>
+<li><strong>异步操作</strong>：异步存储操作</li>
+<li><strong>批量处理</strong>：批量存储操作</li>
+<li><strong>连接池</strong>：数据库连接池</li>
+<li><strong>索引优化</strong>：数据索引优化</li>
+</ul>
+<hr />
+<h2 id="5">5. 日志服务</h2>
+<h3 id="51">5.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Log_Service[&quot;日志服务&quot;]
+        LOG_GENERATION[&quot;日志生成&quot;]
+        LOG_AGGREGATION[&quot;日志聚合&quot;]
+        LOG_ANALYSIS[&quot;日志分析&quot;]
+        LOG_STORAGE[&quot;日志存储&quot;]
+        LOG_SEARCH[&quot;日志搜索&quot;]
+        LOG_UTILS[&quot;日志工具&quot;]
+    end
+
+    LOG_GENERATION --&gt; LOG_AGGREGATION
+    LOG_AGGREGATION --&gt; LOG_ANALYSIS
+    LOG_ANALYSIS --&gt; LOG_STORAGE
+    LOG_STORAGE --&gt; LOG_SEARCH
+    LOG_SEARCH --&gt; LOG_UTILS
+</code></pre></div>
+<h3 id="52">5.2 技术实现</h3>
+<h4 id="_24">日志生成</h4>
+<ul>
+<li><strong>结构化日志</strong>：生成结构化日志</li>
+<li><strong>日志级别</strong>：支持不同级别的日志</li>
+<li><strong>上下文信息</strong>：包含上下文信息</li>
+<li><strong>性能指标</strong>：记录性能指标</li>
+</ul>
+<h4 id="_25">日志聚合</h4>
+<ul>
+<li><strong>多源聚合</strong>：聚合多个来源的日志</li>
+<li><strong>实时聚合</strong>：实时日志聚合</li>
+<li><strong>批量聚合</strong>：批量日志聚合</li>
+<li><strong>格式统一</strong>：统一日志格式</li>
+</ul>
+<h4 id="_26">日志分析</h4>
+<ul>
+<li><strong>模式识别</strong>：识别日志模式</li>
+<li><strong>异常检测</strong>：检测异常日志</li>
+<li><strong>趋势分析</strong>：分析日志趋势</li>
+<li><strong>关联分析</strong>：分析日志关联</li>
+</ul>
+<h4 id="_27">日志存储</h4>
+<ul>
+<li><strong>本地存储</strong>：本地日志存储</li>
+<li><strong>远程存储</strong>：远程日志存储</li>
+<li><strong>压缩存储</strong>：日志压缩存储</li>
+<li><strong>轮转策略</strong>：日志轮转策略</li>
+</ul>
+<h4 id="_28">日志搜索</h4>
+<ul>
+<li><strong>全文搜索</strong>：日志全文搜索</li>
+<li><strong>条件搜索</strong>：条件过滤搜索</li>
+<li><strong>时间范围</strong>：时间范围搜索</li>
+<li><strong>结果高亮</strong>：搜索结果高亮</li>
+</ul>
+<h4 id="_29">日志工具</h4>
+<ul>
+<li><strong>日志清理</strong>：日志清理工具</li>
+<li><strong>日志归档</strong>：日志归档工具</li>
+<li><strong>日志导出</strong>：日志导出工具</li>
+<li><strong>日志监控</strong>：日志监控工具</li>
+</ul>
+<h3 id="53">5.3 性能优化</h3>
+<ul>
+<li><strong>异步写入</strong>：异步日志写入</li>
+<li><strong>缓冲机制</strong>：日志写入缓冲</li>
+<li><strong>批量处理</strong>：批量日志处理</li>
+<li><strong>压缩存储</strong>：压缩日志存储</li>
+<li><strong>索引优化</strong>：日志索引优化</li>
+</ul>
+<hr />
+<h2 id="6">6. 安全服务</h2>
+<h3 id="61">6.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Security_Service[&quot;安全服务&quot;]
+        AUTHENTICATION[&quot;认证服务&quot;]
+        AUTHORIZATION[&quot;授权服务&quot;]
+        ENCRYPTION[&quot;加密服务&quot;]
+        VULNERABILITY_SCAN[&quot;漏洞扫描&quot;]
+        SECURITY_MONITORING[&quot;安全监控&quot;]
+        SECURITY_UTILS[&quot;安全工具&quot;]
+    end
+
+    AUTHENTICATION --&gt; AUTHORIZATION
+    AUTHORIZATION --&gt; ENCRYPTION
+    ENCRYPTION --&gt; VULNERABILITY_SCAN
+    VULNERABILITY_SCAN --&gt; SECURITY_MONITORING
+    SECURITY_MONITORING --&gt; SECURITY_UTILS
+</code></pre></div>
+<h3 id="62">6.2 技术实现</h3>
+<h4 id="_30">认证服务</h4>
+<ul>
+<li><strong>用户认证</strong>：用户身份认证</li>
+<li><strong>API 认证</strong>：API 访问认证</li>
+<li><strong>Token 管理</strong>：Token 生成和管理</li>
+<li><strong>会话管理</strong>：用户会话管理</li>
+</ul>
+<h4 id="_31">授权服务</h4>
+<ul>
+<li><strong>权限管理</strong>：基于角色的权限管理</li>
+<li><strong>访问控制</strong>：细粒度访问控制</li>
+<li><strong>权限验证</strong>：权限验证和检查</li>
+<li><strong>权限审计</strong>：权限使用审计</li>
+</ul>
+<h4 id="_32">加密服务</h4>
+<ul>
+<li><strong>数据加密</strong>：敏感数据加密</li>
+<li><strong>传输加密</strong>：数据传输加密</li>
+<li><strong>密钥管理</strong>：加密密钥管理</li>
+<li><strong>哈希计算</strong>：数据哈希计算</li>
+</ul>
+<h4 id="_33">漏洞扫描</h4>
+<ul>
+<li><strong>代码扫描</strong>：代码安全扫描</li>
+<li><strong>依赖扫描</strong>：依赖包安全扫描</li>
+<li><strong>配置扫描</strong>：配置安全扫描</li>
+<li><strong>漏洞评估</strong>：漏洞风险评估</li>
+</ul>
+<h4 id="_34">安全监控</h4>
+<ul>
+<li><strong>异常检测</strong>：安全异常检测</li>
+<li><strong>入侵检测</strong>：入侵行为检测</li>
+<li><strong>安全告警</strong>：安全事件告警</li>
+<li><strong>安全审计</strong>：安全事件审计</li>
+</ul>
+<h4 id="_35">安全工具</h4>
+<ul>
+<li><strong>安全测试</strong>：安全测试工具</li>
+<li><strong>安全分析</strong>：安全分析工具</li>
+<li><strong>安全修复</strong>：安全问题修复工具</li>
+<li><strong>安全报告</strong>：安全报告生成工具</li>
+</ul>
+<h3 id="63">6.3 性能优化</h3>
+<ul>
+<li><strong>缓存机制</strong>：认证和授权缓存</li>
+<li><strong>异步处理</strong>：异步安全扫描</li>
+<li><strong>批量验证</strong>：批量权限验证</li>
+<li><strong>优化算法</strong>：加密算法优化</li>
+<li><strong>资源隔离</strong>：安全服务资源隔离</li>
+</ul>
+<hr />
+<h2 id="7">7. 网络服务</h2>
+<h3 id="71">7.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Network_Service[&quot;网络服务&quot;]
+        HTTP_CLIENT[&quot;HTTP 客户端&quot;]
+        WEBSOCKET_CLIENT[&quot;WebSocket 客户端&quot;]
+        API_INTEGRATION[&quot;API 集成&quot;]
+        NETWORK_MONITORING[&quot;网络监控&quot;]
+        NETWORK_UTILS[&quot;网络工具&quot;]
+    end
+
+    HTTP_CLIENT --&gt; WEBSOCKET_CLIENT
+    WEBSOCKET_CLIENT --&gt; API_INTEGRATION
+    API_INTEGRATION --&gt; NETWORK_MONITORING
+    NETWORK_MONITORING --&gt; NETWORK_UTILS
+</code></pre></div>
+<h3 id="72">7.2 技术实现</h3>
+<h4 id="http">HTTP 客户端</h4>
+<ul>
+<li><strong>请求管理</strong>：HTTP 请求管理</li>
+<li><strong>响应处理</strong>：HTTP 响应处理</li>
+<li><strong>会话管理</strong>：HTTP 会话管理</li>
+<li><strong>超时控制</strong>：HTTP 请求超时控制</li>
+</ul>
+<h4 id="websocket">WebSocket 客户端</h4>
+<ul>
+<li><strong>连接管理</strong>：WebSocket 连接管理</li>
+<li><strong>消息处理</strong>：WebSocket 消息处理</li>
+<li><strong>重连机制</strong>：WebSocket 自动重连</li>
+<li><strong>心跳检测</strong>：WebSocket 心跳检测</li>
+</ul>
+<h4 id="api">API 集成</h4>
+<ul>
+<li><strong>API 调用</strong>：外部 API 调用</li>
+<li><strong>参数处理</strong>：API 参数处理</li>
+<li><strong>响应解析</strong>：API 响应解析</li>
+<li><strong>错误处理</strong>：API 错误处理</li>
+</ul>
+<h4 id="_36">网络监控</h4>
+<ul>
+<li><strong>网络状态</strong>：网络状态监控</li>
+<li><strong>性能监控</strong>：网络性能监控</li>
+<li><strong>错误监控</strong>：网络错误监控</li>
+<li><strong>流量监控</strong>：网络流量监控</li>
+</ul>
+<h4 id="_37">网络工具</h4>
+<ul>
+<li><strong>网络测试</strong>：网络连接测试</li>
+<li><strong>代理管理</strong>：网络代理管理</li>
+<li><strong>重试机制</strong>：网络请求重试</li>
+<li><strong>速率限制</strong>：网络请求速率限制</li>
+</ul>
+<h3 id="73">7.3 性能优化</h3>
+<ul>
+<li><strong>连接池</strong>：HTTP 连接池</li>
+<li><strong>并发请求</strong>：并发网络请求</li>
+<li><strong>缓存机制</strong>：网络响应缓存</li>
+<li><strong>压缩传输</strong>：数据压缩传输</li>
+<li><strong>智能重试</strong>：智能网络请求重试</li>
+</ul>
+<hr />
+<h2 id="8">8. 配置服务</h2>
+<h3 id="81">8.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Config_Service[&quot;配置服务&quot;]
+        CONFIG_LOADING[&quot;配置加载&quot;]
+        CONFIG_MANAGEMENT[&quot;配置管理&quot;]
+        CONFIG_VALIDATION[&quot;配置验证&quot;]
+        CONFIG_WATCHING[&quot;配置监控&quot;]
+        CONFIG_UTILS[&quot;配置工具&quot;]
+    end
+
+    CONFIG_LOADING --&gt; CONFIG_MANAGEMENT
+    CONFIG_MANAGEMENT --&gt; CONFIG_VALIDATION
+    CONFIG_VALIDATION --&gt; CONFIG_WATCHING
+    CONFIG_WATCHING --&gt; CONFIG_UTILS
+</code></pre></div>
+<h3 id="82">8.2 技术实现</h3>
+<h4 id="_38">配置加载</h4>
+<ul>
+<li><strong>文件加载</strong>：从文件加载配置</li>
+<li><strong>环境变量</strong>：从环境变量加载配置</li>
+<li><strong>远程加载</strong>：从远程服务加载配置</li>
+<li><strong>默认配置</strong>：提供默认配置</li>
+</ul>
+<h4 id="_39">配置管理</h4>
+<ul>
+<li><strong>配置合并</strong>：合并多个配置源</li>
+<li><strong>配置覆盖</strong>：配置覆盖机制</li>
+<li><strong>配置继承</strong>：配置继承机制</li>
+<li><strong>配置版本</strong>：配置版本管理</li>
+</ul>
+<h4 id="_40">配置验证</h4>
+<ul>
+<li><strong>格式验证</strong>：配置格式验证</li>
+<li><strong>值验证</strong>：配置值验证</li>
+<li><strong>依赖验证</strong>：配置依赖验证</li>
+<li><strong>一致性验证</strong>：配置一致性验证</li>
+</ul>
+<h4 id="_41">配置监控</h4>
+<ul>
+<li><strong>实时监控</strong>：实时监控配置变化</li>
+<li><strong>热更新</strong>：配置热更新</li>
+<li><strong>变更通知</strong>：配置变更通知</li>
+<li><strong>变更审计</strong>：配置变更审计</li>
+</ul>
+<h4 id="_42">配置工具</h4>
+<ul>
+<li><strong>配置生成</strong>：自动生成配置</li>
+<li><strong>配置备份</strong>：配置备份和恢复</li>
+<li><strong>配置比较</strong>：配置比较工具</li>
+<li><strong>配置文档</strong>：配置文档生成</li>
+</ul>
+<h3 id="83">8.3 性能优化</h3>
+<ul>
+<li><strong>缓存机制</strong>：配置缓存</li>
+<li><strong>懒加载</strong>：配置懒加载</li>
+<li><strong>预加载</strong>：配置预加载</li>
+<li><strong>增量更新</strong>：配置增量更新</li>
+<li><strong>并行加载</strong>：并行配置加载</li>
+</ul>
+<hr />
+<h2 id="9">9. 部署服务</h2>
+<h3 id="91">9.1 核心功能</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Deploy_Service[&quot;部署服务&quot;]
+        DEPLOY_PIPELINE[&quot;部署流水线&quot;]
+        ENVIRONMENT_MANAGEMENT[&quot;环境管理&quot;]
+        PACKAGE_MANAGEMENT[&quot;包管理&quot;]
+        DEPLOY_MONITORING[&quot;部署监控&quot;]
+        DEPLOY_UTILS[&quot;部署工具&quot;]
+    end
+
+    DEPLOY_PIPELINE --&gt; ENVIRONMENT_MANAGEMENT
+    ENVIRONMENT_MANAGEMENT --&gt; PACKAGE_MANAGEMENT
+    PACKAGE_MANAGEMENT --&gt; DEPLOY_MONITORING
+    DEPLOY_MONITORING --&gt; DEPLOY_UTILS
+</code></pre></div>
+<h3 id="92">9.2 技术实现</h3>
+<h4 id="_43">部署流水线</h4>
+<ul>
+<li><strong>构建流程</strong>：代码构建流程</li>
+<li><strong>测试流程</strong>：自动化测试流程</li>
+<li><strong>部署流程</strong>：自动化部署流程</li>
+<li><strong>回滚流程</strong>：部署回滚流程</li>
+</ul>
+<h4 id="_44">环境管理</h4>
+<ul>
+<li><strong>环境配置</strong>：环境配置管理</li>
+<li><strong>环境隔离</strong>：环境隔离机制</li>
+<li><strong>环境复制</strong>：环境复制和克隆</li>
+<li><strong>环境清理</strong>：环境清理和回收</li>
+</ul>
+<h4 id="_45">包管理</h4>
+<ul>
+<li><strong>依赖管理</strong>：依赖包管理</li>
+<li><strong>包构建</strong>：软件包构建</li>
+<li><strong>包发布</strong>：软件包发布</li>
+<li><strong>包版本</strong>：包版本管理</li>
+</ul>
+<h4 id="_46">部署监控</h4>
+<ul>
+<li><strong>部署状态</strong>：部署状态监控</li>
+<li><strong>健康检查</strong>：服务健康检查</li>
+<li><strong>性能监控</strong>：部署性能监控</li>
+<li><strong>错误监控</strong>：部署错误监控</li>
+</ul>
+<h4 id="_47">部署工具</h4>
+<ul>
+<li><strong>部署脚本</strong>：部署脚本管理</li>
+<li><strong>部署模板</strong>：部署模板管理</li>
+<li><strong>部署自动化</strong>：部署自动化工具</li>
+<li><strong>部署文档</strong>：部署文档生成</li>
+</ul>
+<h3 id="93">9.3 性能优化</h3>
+<ul>
+<li><strong>并行构建</strong>：并行构建和测试</li>
+<li><strong>增量部署</strong>：增量部署</li>
+<li><strong>缓存机制</strong>：构建缓存</li>
+<li><strong>资源优化</strong>：部署资源优化</li>
+<li><strong>自动化</strong>：自动化部署流程</li>
+</ul>
+<hr />
+<h2 id="_48">基础设施服务数据流</h2>
+<h3 id="_49">典型工作流程</h3>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant Core as 核心能力层
+    participant FileSystem as 文件系统服务
+    participant GitService as Git 集成服务
+    participant TestService as 测试服务
+    participant StorageService as 存储服务
+    participant LogService as 日志服务
+    participant SecurityService as 安全服务
+    participant NetworkService as 网络服务
+    participant ConfigService as 配置服务
+    participant DeployService as 部署服务
+
+    Core-&gt;&gt;FileSystem: 读写文件
+    FileSystem--&gt;&gt;Core: 返回文件操作结果
+
+    Core-&gt;&gt;GitService: 执行 Git 操作
+    GitService--&gt;&gt;Core: 返回 Git 操作结果
+
+    Core-&gt;&gt;TestService: 执行测试
+    TestService--&gt;&gt;Core: 返回测试结果
+
+    Core-&gt;&gt;StorageService: 存储数据
+    StorageService--&gt;&gt;Core: 返回存储结果
+
+    Core-&gt;&gt;LogService: 记录日志
+    LogService--&gt;&gt;Core: 确认日志记录
+
+    Core-&gt;&gt;SecurityService: 验证权限
+    SecurityService--&gt;&gt;Core: 返回权限验证结果
+
+    Core-&gt;&gt;NetworkService: 发送网络请求
+    NetworkService--&gt;&gt;Core: 返回网络响应
+
+    Core-&gt;&gt;ConfigService: 加载配置
+    ConfigService--&gt;&gt;Core: 返回配置数据
+
+    Core-&gt;&gt;DeployService: 执行部署
+    DeployService--&gt;&gt;Core: 返回部署结果
+</code></pre></div>
+<hr />
+<h2 id="api_1">基础设施服务 API 设计</h2>
+<h3 id="api_2">文件系统服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FileSystemService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;读取文件&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;写入文件&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;列出目录内容&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">watch_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Watcher</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;监控文件变化&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="git-api">Git 集成服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GitIntegrationService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone_repository</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;克隆仓库&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;提交代码&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkout_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;切换分支&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">commit2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;获取差异&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_3">测试服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TestService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discover_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;发现测试&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TestResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;运行测试&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_test_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">TestResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;生成测试报告&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoverageReport</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;获取测试覆盖率&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_4">存储服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">StorageService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存储数据&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;检索数据&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;删除数据&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;列出键&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_5">日志服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LogService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;记录日志&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">LogEntry</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;搜索日志&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyze_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LogAnalysis</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;分析日志&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;导出日志&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_6">安全服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SecurityService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;认证用户&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">authorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;授权访问&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;加密数据&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encrypted_data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;解密数据&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_7">网络服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NetworkService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;发送 HTTP 请求&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_websocket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">on_message</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebSocket</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;连接 WebSocket&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;测试网络连接&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_network_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NetworkStatus</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;获取网络状态&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_8">配置服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConfigService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;加载配置&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;更新配置&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValidationResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;验证配置&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">watch_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Watcher</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;监控配置变化&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="api_9">部署服务 API</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DeployService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BuildResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;构建项目&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deploy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">package</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeployResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;部署项目&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RollbackResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;回滚部署&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_deploy_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeployStatus</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;获取部署状态&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="_50">实施路线图</h2>
+<h3 id="phase-1">Phase 1: 基础服务</h3>
+<ul>
+<li>实现文件系统服务</li>
+<li>实现 Git 集成服务</li>
+<li>实现基础测试服务</li>
+<li>实现本地存储服务</li>
+<li>实现基础日志服务</li>
+</ul>
+<h3 id="phase-2">Phase 2: 核心功能</h3>
+<ul>
+<li>实现安全服务</li>
+<li>实现网络服务</li>
+<li>实现配置服务</li>
+<li>实现部署服务</li>
+<li>实现云存储集成</li>
+</ul>
+<h3 id="phase-3">Phase 3: 高级功能</h3>
+<ul>
+<li>实现文件监控和缓存</li>
+<li>实现高级 Git 操作</li>
+<li>实现测试覆盖率分析</li>
+<li>实现分布式存储</li>
+<li>实现高级日志分析</li>
+</ul>
+<h3 id="phase-4">Phase 4: 优化和扩展</h3>
+<ul>
+<li>性能优化</li>
+<li>安全性增强</li>
+<li>扩展性改进</li>
+<li>自动化部署</li>
+<li>监控和告警</li>
+</ul>
+<hr />
+<h2 id="_51">核心特性对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>传统基础设施</th>
+<th>Agently 基础设施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>文件系统</strong></td>
+<td>基本文件操作</td>
+<td>智能文件监控 + 缓存</td>
+</tr>
+<tr>
+<td><strong>Git 集成</strong></td>
+<td>手动 Git 操作</td>
+<td>自动化 Git 管理</td>
+</tr>
+<tr>
+<td><strong>测试服务</strong></td>
+<td>基本测试执行</td>
+<td>智能测试发现 + 覆盖率分析</td>
+</tr>
+<tr>
+<td><strong>存储服务</strong></td>
+<td>本地存储</td>
+<td>多存储后端 + 缓存</td>
+</tr>
+<tr>
+<td><strong>日志服务</strong></td>
+<td>简单日志</td>
+<td>结构化日志 + 分析</td>
+</tr>
+<tr>
+<td><strong>安全服务</strong></td>
+<td>基本认证</td>
+<td>完整的安全体系</td>
+</tr>
+<tr>
+<td><strong>网络服务</strong></td>
+<td>基本 HTTP</td>
+<td>高级网络功能 + 监控</td>
+</tr>
+<tr>
+<td><strong>配置服务</strong></td>
+<td>静态配置</td>
+<td>动态配置 + 监控</td>
+</tr>
+<tr>
+<td><strong>部署服务</strong></td>
+<td>手动部署</td>
+<td>自动化部署 + 回滚</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_52">总结</h2>
+<p>Agently 基础设施层设计实现了：</p>
+<ol>
+<li><strong>模块化架构</strong>：清晰的服务边界和职责</li>
+<li><strong>高性能设计</strong>：各种性能优化技术的应用</li>
+<li><strong>可靠性保障</strong>：完善的错误处理和恢复机制</li>
+<li><strong>安全性增强</strong>：全面的安全服务体系</li>
+<li><strong>可扩展性</strong>：灵活的插件和扩展机制</li>
+<li><strong>可观测性</strong>：完整的监控和日志系统</li>
+</ol>
+<p>这些基础设施服务为 Agently 提供了坚实的基础，确保系统的稳定运行和高效性能。</p>
+<hr />
+<p><strong>文档版本</strong>: v1.0<br />
+<strong>最后更新</strong>: 2026-03-07<br />
+<strong>维护者</strong>: Agently 开发团队</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yunlongwen/agently" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

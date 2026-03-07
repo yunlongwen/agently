@@ -1,0 +1,2503 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agently - AI驱动的编程助手">
+      
+      
+        <meta name="author" content="Agently Team">
+      
+      
+        <link rel="canonical" href="https://yunlongwen.github.io/agently/cli_layer/cli_architecture/">
+      
+      
+        <link rel="prev" href="../../agent_layer/agent_architecture/">
+      
+      
+        <link rel="next" href="../../orchestrator_layer/orchestrator_architecture/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>CLI 层 - Agently</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agently-cli" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Agently" class="md-header__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Agently
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CLI 层
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/introduction/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  快速开始
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/cli_usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  用户指南
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  架构设计
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../requirements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  技术文档
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Agently" class="md-nav__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Agently
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    快速开始
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目简介
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速入门
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用户指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    用户指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 使用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    命令参考
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构设计
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    架构设计
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    系统架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent_layer/agent_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    智能体层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 层
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文档说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 架构概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        命令结构设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="命令结构设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        命令层次
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        命令分类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        命令详细设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="命令详细设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 核心命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 智能体快捷命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 工具命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 管理命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        交互模式设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="交互模式设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 命令行模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 交互式模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 菜单模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        界面组件设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="界面组件设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 输出格式化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 进度显示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 富文本界面元素
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        语境管理设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="语境管理设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        语境生命周期
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        语境数据结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置管理设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置管理设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置层次结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配置文件示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        错误处理设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="错误处理设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        错误分类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        错误处理流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        扩展机制设计
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="扩展机制设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        插件系统
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自定义命令示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agently-cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agently CLI 核心设计原则
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agently CLI 核心设计原则">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 多智能体协作支持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 三种交互模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 语境感知设计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sdlc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 完整的 SDLC 支持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 可观测性集成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实现建议
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="实现建议">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推荐的 CLI 框架
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推荐的组合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../orchestrator_layer/orchestrator_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协调层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core_services_layer/core_services_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    核心能力层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure_layer/infrastructure_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术文档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    技术文档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    需求文档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tech_selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术选型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer_skills/AGENTIC_CODING_BEST_PRACTICES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开发指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文档部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="agently-cli">Agently CLI 架构设计</h1>
+<h2 id="_1">文档说明</h2>
+<p>本文档详细描述 Agently CLI 的架构设计，包括命令结构、交互模式、界面组件等。</p>
+<hr />
+<h2 id="cli">CLI 架构概览</h2>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph CLI_Architecture[&quot;CLI 架构&quot;]
+        ENTRY[入口层]
+        CMD_LAYER[命令层]
+        INTERACTIVE_LAYER[交互层]
+        RENDER_LAYER[渲染层]
+        CONTEXT_LAYER[语境层]
+        CONFIG_LAYER[配置层]
+    end
+
+    subgraph Entry_Layer[&quot;入口层&quot;]
+        MAIN_ENTRY[主入口]
+        ARG_PARSER[参数解析器]
+        ENV_LOADER[环境加载器]
+    end
+
+    subgraph Command_Layer[&quot;命令层&quot;]
+        CMD_REGISTRY[命令注册表]
+        CMD_ROUTER[命令路由器]
+        CMD_EXECUTOR[命令执行器]
+    end
+
+    subgraph Interactive_Layer[&quot;交互层&quot;]
+        PROMPT_ENGINE[提示引擎]
+        INPUT_HANDLER[输入处理器]
+        MENU_SYSTEM[菜单系统]
+    end
+
+    subgraph Render_Layer[&quot;渲染层&quot;]
+        OUTPUT_FORMATTER[输出格式化器]
+        PROGRESS_DISPLAY[进度显示]
+        RICH_UI[富文本界面]
+    end
+
+    subgraph Context_Layer[&quot;语境层 (Context)&quot;]
+        CONTEXT_MGR[语境管理器]
+        MEMORY_PRESERVE[记忆保持]
+        DIALOGUE_TRACK[对话追踪]
+    end
+
+    subgraph Config_Layer[&quot;配置层&quot;]
+        CONFIG_LOADER[配置加载器]
+        PROFILE_MGR[配置管理器]
+        ENV_VAR_MGR[环境变量管理]
+    end
+
+    ENTRY --&gt; Entry_Layer
+    CMD_LAYER --&gt; Command_Layer
+    INTERACTIVE_LAYER --&gt; Interactive_Layer
+    RENDER_LAYER --&gt; Render_Layer
+    CONTEXT_LAYER --&gt; Context_Layer
+    CONFIG_LAYER --&gt; Config_Layer
+
+    style CLI_Architecture fill:#e1f5ff
+    style Entry_Layer fill:#fff3e0
+    style Command_Layer fill:#e8f5e9
+    style Interactive_Layer fill:#f3e5f5
+    style Render_Layer fill:#e1f5ff
+    style Context_Layer fill:#fff3e0
+    style Config_Layer fill:#e8f5e9
+</code></pre></div>
+<hr />
+<h2 id="_2">命令结构设计</h2>
+<h3 id="_3">命令层次</h3>
+<div class="highlight"><pre><span></span><code>agently [全局选项] &lt;命令&gt; [子命令] [参数] [选项]
+</code></pre></div>
+<h3 id="_4">命令分类</h3>
+<div class="highlight"><pre><span></span><code>mindmap
+  root((Agently CLI))
+    核心命令
+      agent
+        nexus
+        list
+        info
+      chat
+      task
+      config
+    智能体命令
+      requirements
+      architecture
+      code
+      debug
+      test
+      review
+      git
+      deploy
+    工具命令
+      file
+      search
+      analyze
+      run
+    管理命令
+      init
+      status
+      logs
+      update
+    帮助命令
+      help
+      version
+      docs
+</code></pre></div>
+<h3 id="_5">命令详细设计</h3>
+<h4 id="1">1. 核心命令</h4>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>子命令</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent</code></td>
+<td>-</td>
+<td>智能体管理</td>
+<td><code>agently agent</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>nexus</code></td>
+<td>使用 Nexus 综合智能体</td>
+<td><code>agently agent nexus</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>[name]</code></td>
+<td>使用特定智能体</td>
+<td><code>agently agent code-generator</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>list</code></td>
+<td>列出所有智能体</td>
+<td><code>agently agent list</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>info [name]</code></td>
+<td>查看智能体信息</td>
+<td><code>agently agent info nexus</code></td>
+</tr>
+<tr>
+<td><code>chat</code></td>
+<td>-</td>
+<td>交互式对话模式</td>
+<td><code>agently chat</code></td>
+</tr>
+<tr>
+<td><code>task</code></td>
+<td>-</td>
+<td>执行特定任务</td>
+<td><code>agently task "修复登录bug"</code></td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>-</td>
+<td>配置管理</td>
+<td><code>agently config</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="2">2. 智能体快捷命令</h4>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requirements</code></td>
+<td>需求分析</td>
+<td><code>agently requirements "用户认证功能"</code></td>
+</tr>
+<tr>
+<td><code>architecture</code></td>
+<td>架构设计</td>
+<td><code>agently architecture "设计API网关"</code></td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>代码生成</td>
+<td><code>agently code "生成用户模型"</code></td>
+</tr>
+<tr>
+<td><code>debug</code></td>
+<td>调试修复</td>
+<td><code>agently debug "分析错误日志"</code></td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>测试生成</td>
+<td><code>agently test "生成单元测试"</code></td>
+</tr>
+<tr>
+<td><code>review</code></td>
+<td>代码审查</td>
+<td><code>agently review src/main.py</code></td>
+</tr>
+<tr>
+<td><code>git</code></td>
+<td>Git 操作</td>
+<td><code>agently git "提交当前更改"</code></td>
+</tr>
+<tr>
+<td><code>deploy</code></td>
+<td>部署配置</td>
+<td><code>agently deploy "配置Docker"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="3">3. 工具命令</h4>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>子命令</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>file</code></td>
+<td><code>read</code></td>
+<td>读取文件</td>
+<td><code>agently file read src/main.py</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>write</code></td>
+<td>写入文件</td>
+<td><code>agently file write output.txt "内容"</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>search</code></td>
+<td>搜索文件</td>
+<td><code>agently file search "*.py"</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>-</td>
+<td>代码搜索</td>
+<td><code>agently search "class User"</code></td>
+</tr>
+<tr>
+<td><code>analyze</code></td>
+<td>-</td>
+<td>代码分析</td>
+<td><code>agently analyze src/</code></td>
+</tr>
+<tr>
+<td><code>run</code></td>
+<td>-</td>
+<td>运行命令</td>
+<td><code>agently run "npm test"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="4">4. 管理命令</h4>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init</code></td>
+<td>初始化项目</td>
+<td><code>agently init</code></td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>查看状态</td>
+<td><code>agently status</code></td>
+</tr>
+<tr>
+<td><code>logs</code></td>
+<td>查看日志</td>
+<td><code>agently logs</code></td>
+</tr>
+<tr>
+<td><code>update</code></td>
+<td>更新系统</td>
+<td><code>agently update</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_6">交互模式设计</h2>
+<h3 id="1_1">1. 命令行模式</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 直接执行命令</span>
+$<span class="w"> </span>agently<span class="w"> </span>agent<span class="w"> </span>nexus<span class="w"> </span><span class="s2">&quot;帮我开发一个用户认证系统&quot;</span>
+
+<span class="c1"># 使用特定智能体</span>
+$<span class="w"> </span>agently<span class="w"> </span>code<span class="w"> </span><span class="s2">&quot;生成一个Python类来处理用户数据&quot;</span>
+
+<span class="c1"># 批量处理</span>
+$<span class="w"> </span>agently<span class="w"> </span>task<span class="w"> </span>--file<span class="w"> </span>tasks.txt
+</code></pre></div>
+<h3 id="2_1">2. 交互式模式</h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>agently<span class="w"> </span>chat
+
+Agently<span class="w"> </span>v1.0.0<span class="w"> </span>-<span class="w"> </span><span class="nv">智能编程助手</span>
+<span class="o">================================</span>
+
+当前智能体:<span class="w"> </span>Nexus<span class="w"> </span><span class="o">(</span>综合智能体<span class="o">)</span>
+工作目录:<span class="w"> </span>/Users/dev/myproject
+
+&gt;<span class="w"> </span>帮我分析这个项目的架构
+
+<span class="o">[</span>思考中...<span class="o">]</span>
+
+正在分析项目架构...
+✓<span class="w"> </span>扫描项目结构
+✓<span class="w"> </span>分析依赖关系
+✓<span class="w"> </span>识别核心模块
+
+项目架构分析结果:
+-<span class="w"> </span>项目类型:<span class="w"> </span>Python<span class="w"> </span>Web<span class="w"> </span>应用
+-<span class="w"> </span>框架:<span class="w"> </span>FastAPI
+-<span class="w"> </span>主要模块:<span class="w"> </span>api,<span class="w"> </span>models,<span class="w"> </span>services,<span class="w"> </span>utils
+-<span class="w"> </span>建议:<span class="w"> </span>可以考虑将<span class="w"> </span>services<span class="w"> </span>模块进一步拆分
+
+&gt;<span class="w"> </span>切换到代码生成智能体
+
+已切换到:<span class="w"> </span>code-generator<span class="w"> </span><span class="o">(</span>代码生成智能体<span class="o">)</span>
+
+&gt;<span class="w"> </span>生成一个用户认证中间件
+
+<span class="o">[</span>生成中...<span class="o">]</span>
+
+✓<span class="w"> </span>已生成:<span class="w"> </span>src/middleware/auth.py
+✓<span class="w"> </span>已生成:<span class="w"> </span>src/models/user.py
+✓<span class="w"> </span>已更新:<span class="w"> </span>src/main.py
+
+&gt;<span class="w"> </span><span class="nb">exit</span>
+
+再见！语境已保存。
+</code></pre></div>
+<h3 id="3_1">3. 菜单模式</h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>agently
+
+Agently<span class="w"> </span>-<span class="w"> </span><span class="nv">智能编程助手</span>
+<span class="o">======================</span>
+
+请选择操作:
+
+<span class="m">1</span>.<span class="w"> </span>🚀<span class="w"> </span>快速开始<span class="w"> </span><span class="o">(</span>使用<span class="w"> </span>Nexus<span class="w"> </span>智能体<span class="o">)</span>
+<span class="m">2</span>.<span class="w"> </span>🤖<span class="w"> </span>选择智能体
+<span class="m">3</span>.<span class="w"> </span>💬<span class="w"> </span>交互式对话
+<span class="m">4</span>.<span class="w"> </span>📁<span class="w"> </span>项目管理
+<span class="m">5</span>.<span class="w"> </span>⚙️<span class="w">  </span>配置设置
+<span class="m">6</span>.<span class="w"> </span>❓<span class="w"> </span>帮助文档
+<span class="m">7</span>.<span class="w"> </span>🚪<span class="w"> </span>退出
+
+请输入选项<span class="w"> </span><span class="o">[</span><span class="m">1</span>-7<span class="o">]</span>:<span class="w"> </span><span class="m">2</span>
+
+选择智能体:
+
+<span class="m">1</span>.<span class="w"> </span>Nexus<span class="w"> </span>-<span class="w"> </span>综合智能体<span class="w"> </span><span class="o">(</span>推荐<span class="o">)</span>
+<span class="m">2</span>.<span class="w"> </span>requirements-analyzer<span class="w"> </span>-<span class="w"> </span>需求分析
+<span class="m">3</span>.<span class="w"> </span>architecture-designer<span class="w"> </span>-<span class="w"> </span>架构设计
+<span class="m">4</span>.<span class="w"> </span>code-generator<span class="w"> </span>-<span class="w"> </span>代码生成
+<span class="m">5</span>.<span class="w"> </span>code-understander<span class="w"> </span>-<span class="w"> </span>代码理解
+<span class="m">6</span>.<span class="w"> </span>bug-fixer<span class="w"> </span>-<span class="w"> </span>调试修复
+<span class="m">7</span>.<span class="w"> </span>tester<span class="w"> </span>-<span class="w"> </span>测试
+<span class="m">8</span>.<span class="w"> </span>code-reviewer<span class="w"> </span>-<span class="w"> </span>代码审查
+<span class="m">9</span>.<span class="w"> </span>git-manager<span class="w"> </span>-<span class="w"> </span>Git管理
+<span class="m">10</span>.<span class="w"> </span>deploy-configurator<span class="w"> </span>-<span class="w"> </span>部署配置
+
+请输入智能体编号<span class="w"> </span><span class="o">[</span><span class="m">1</span>-10<span class="o">]</span>:<span class="w"> </span><span class="m">1</span>
+
+已选择:<span class="w"> </span>Nexus<span class="w"> </span><span class="o">(</span>综合智能体<span class="o">)</span>
+
+请输入您的需求:
+</code></pre></div>
+<hr />
+<h2 id="_7">界面组件设计</h2>
+<h3 id="1_2">1. 输出格式化</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    OUTPUT[原始输出]
+    FORMATTER[格式化器]
+
+    subgraph Format_Types[&quot;格式类型&quot;]
+        PLAIN[纯文本]
+        MARKDOWN[Markdown]
+        JSON[JSON]
+        TABLE[表格]
+        TREE[树形结构]
+        CODE[代码块]
+    end
+
+    OUTPUT --&gt; FORMATTER
+    FORMATTER --&gt; PLAIN
+    FORMATTER --&gt; MARKDOWN
+    FORMATTER --&gt; JSON
+    FORMATTER --&gt; TABLE
+    FORMATTER --&gt; TREE
+    FORMATTER --&gt; CODE
+</code></pre></div>
+<h3 id="2_2">2. 进度显示</h3>
+<div class="highlight"><pre><span></span><code>[分析中...] 扫描项目结构 ████████░░ 80%
+[生成中...] 生成代码文件 ██████░░░░ 60%
+[测试中...] 运行测试用例 ██████████ 100% ✓
+</code></pre></div>
+<h3 id="3_2">3. 富文本界面元素</h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────┐
+│  Agently - 智能编程助手                  │
+├─────────────────────────────────────────┤
+│  当前智能体: Nexus                       │
+│  工作目录: /Users/dev/project           │
+│  语境时长: 15分钟                        │
+├─────────────────────────────────────────┤
+│  最近操作:                              │
+│  ✓ 分析项目架构                         │
+│  ✓ 生成用户模型                         │
+│  ✓ 创建API端点                          │
+│  ⏳ 生成测试用例                         │
+└─────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h2 id="_8">语境管理设计</h2>
+<h3 id="_9">语境生命周期</h3>
+<div class="highlight"><pre><span></span><code>stateDiagram-v2
+    [*] --&gt; Created: 创建语境
+    Created --&gt; Active: 用户输入
+    Active --&gt; Processing: 开始处理
+    Processing --&gt; Waiting: 等待输入
+    Waiting --&gt; Active: 用户输入
+    Processing --&gt; Paused: 暂停
+    Paused --&gt; Active: 恢复
+    Active --&gt; Saved: 保存语境
+    Saved --&gt; [*]: 结束
+    Active --&gt; Error: 发生错误
+    Error --&gt; Active: 错误恢复
+    Error --&gt; [*]: 放弃语境
+</code></pre></div>
+<h3 id="_10">语境数据结构</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">context</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sess_20260307_001&quot;</span>
+<span class="w">  </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2026-03-07T10:00:00Z&quot;</span>
+<span class="w">  </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2026-03-07T10:30:00Z&quot;</span>
+
+<span class="w">  </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">working_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/Users/dev/project&quot;</span>
+<span class="w">    </span><span class="nt">current_agent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nexus&quot;</span>
+<span class="w">    </span><span class="nt">conversation_history</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;user&quot;</span>
+<span class="w">        </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;帮我开发用户认证系统&quot;</span>
+<span class="w">        </span><span class="nt">timestamp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2026-03-07T10:00:00Z&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;assistant&quot;</span>
+<span class="w">        </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;我来帮您开发用户认证系统...&quot;</span>
+<span class="w">        </span><span class="nt">timestamp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2026-03-07T10:00:05Z&quot;</span>
+
+<span class="w">    </span><span class="nt">task_state</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">current_task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;开发用户认证系统&quot;</span>
+<span class="w">      </span><span class="nt">subtasks</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;分析需求&quot;</span>
+<span class="w">          </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;completed&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;设计架构&quot;</span>
+<span class="w">          </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;completed&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;生成代码&quot;</span>
+<span class="w">          </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;in_progress&quot;</span>
+
+<span class="w">    </span><span class="nt">file_context</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">modified_files</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;src/models/user.py&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;src/auth/middleware.py&quot;</span>
+<span class="w">      </span><span class="nt">created_files</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;src/auth/__init__.py&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="_11">配置管理设计</h2>
+<h3 id="_12">配置层次结构</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    GLOBAL[全局配置]
+    PROJECT[项目配置]
+    USER[用户配置]
+    CONTEXT_CFG[语境配置]
+
+    GLOBAL --&gt; PROJECT
+    PROJECT --&gt; USER
+    USER --&gt; CONTEXT_CFG
+
+    subgraph Global_Config[&quot;全局配置&quot;]
+        G_MODELS[模型配置]
+        G_TOOLS[工具配置]
+        G_AGENTS[智能体配置]
+    end
+
+    subgraph Project_Config[&quot;项目配置&quot;]
+        P_LANGUAGE[语言设置]
+        P_FRAMEWORK[框架设置]
+        P_STYLE[代码风格]
+    end
+
+    subgraph User_Config[&quot;用户配置&quot;]
+        U_PREFERENCES[用户偏好]
+        U_SHORTCUTS[快捷命令]
+        U_PROFILES[配置文件]
+    end
+
+    subgraph Context_Config[&quot;语境配置&quot;]
+        C_AGENT[当前智能体]
+        C_MEMORY[记忆设置]
+    end
+
+    GLOBAL --&gt; Global_Config
+    PROJECT --&gt; Project_Config
+    USER --&gt; User_Config
+    CONTEXT_CFG --&gt; Context_Config
+</code></pre></div>
+<h3 id="_13">配置文件示例</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ~/.agently/config.yaml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0&quot;</span>
+
+<span class="c1"># 全局设置</span>
+<span class="nt">global</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">default_agent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nexus&quot;</span>
+<span class="w">  </span><span class="nt">output_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;markdown&quot;</span>
+<span class="w">  </span><span class="nt">auto_save</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">verbose</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="c1"># 模型配置</span>
+<span class="nt">models</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">  </span><span class="nt">providers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">openai</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${OPENAI_API_KEY}&quot;</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4&quot;</span>
+<span class="w">      </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+<span class="w">    </span><span class="nt">anthropic</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${ANTHROPIC_API_KEY}&quot;</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;claude-3-opus-20240229&quot;</span>
+<span class="w">      </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+
+<span class="c1"># 智能体配置</span>
+<span class="nt">agents</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nexus</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">    </span><span class="nt">max_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span>
+<span class="w">  </span><span class="nt">code-generator</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;anthropic&quot;</span>
+<span class="w">    </span><span class="nt">code_style</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pep8&quot;</span>
+
+<span class="c1"># 用户偏好</span>
+<span class="nt">user</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">theme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dark&quot;</span>
+<span class="w">  </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;zh-CN&quot;</span>
+<span class="w">  </span><span class="nt">shortcuts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;快速生成&quot;</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;agently</span><span class="nv"> </span><span class="s">code&quot;</span>
+<span class="w">      </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gen&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="_14">错误处理设计</h2>
+<h3 id="_15">错误分类</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    ERRORS[错误类型]
+
+    ERRORS --&gt; USER_ERRORS[用户错误]
+    ERRORS --&gt; SYSTEM_ERRORS[系统错误]
+    ERRORS --&gt; NETWORK_ERRORS[网络错误]
+    ERRORS --&gt; AGENT_ERRORS[智能体错误]
+
+    USER_ERRORS --&gt; INVALID_CMD[无效命令]
+    USER_ERRORS --&gt; INVALID_ARGS[无效参数]
+    USER_ERRORS --&gt; PERMISSION_DENIED[权限不足]
+
+    SYSTEM_ERRORS --&gt; CONFIG_ERROR[配置错误]
+    SYSTEM_ERRORS --&gt; FILE_ERROR[文件错误]
+    SYSTEM_ERRORS --&gt; RESOURCE_ERROR[资源错误]
+
+    NETWORK_ERRORS --&gt; TIMEOUT[超时]
+    NETWORK_ERRORS --&gt; CONNECTION[连接错误]
+    NETWORK_ERRORS --&gt; API_ERROR[API错误]
+
+    AGENT_ERRORS --&gt; EXECUTION_ERROR[执行错误]
+    AGENT_ERRORS --&gt; TOOL_ERROR[工具错误]
+    AGENT_ERRORS --&gt; MODEL_ERROR[模型错误]
+</code></pre></div>
+<h3 id="_16">错误处理流程</h3>
+<div class="highlight"><pre><span></span><code>错误发生
+    ↓
+错误分类
+    ↓
+错误记录
+    ↓
+用户提示
+    ↓
+恢复策略
+    ↓
+继续/退出
+</code></pre></div>
+<hr />
+<h2 id="_17">扩展机制设计</h2>
+<h3 id="_18">插件系统</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    CLI[CLI核心]
+    PLUGIN_MGR[插件管理器]
+
+    subgraph Plugins[&quot;插件类型&quot;]
+        CMD_PLUGIN[命令插件]
+        UI_PLUGIN[界面插件]
+        TOOL_PLUGIN[工具插件]
+        AGENT_PLUGIN[智能体插件]
+    end
+
+    CLI --&gt; PLUGIN_MGR
+    PLUGIN_MGR --&gt; Plugins
+
+    CMD_PLUGIN --&gt; NEW_CMD[新命令]
+    UI_PLUGIN --&gt; NEW_UI[新界面元素]
+    TOOL_PLUGIN --&gt; NEW_TOOL[新工具]
+    AGENT_PLUGIN --&gt; NEW_AGENT[新智能体]
+</code></pre></div>
+<h3 id="_19">自定义命令示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">agently.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">register_command</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my-cmd&quot;</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;我的自定义命令&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="c1"># 实现命令逻辑</span>
+        <span class="k">pass</span>
+
+<span class="n">register_command</span><span class="p">(</span><span class="n">MyCustomCommand</span><span class="p">())</span>
+</code></pre></div>
+<hr />
+<h2 id="agently-cli_1">Agently CLI 核心设计原则</h2>
+<h3 id="1_3">1. 多智能体协作支持</h3>
+<p>Agently CLI 设计为支持多智能体协作的编程助手：</p>
+<ul>
+<li><strong>Nexus 综合智能体</strong>：默认使用 Nexus 自动调度多个专业智能体</li>
+<li><strong>专业智能体快捷命令</strong>：直接调用特定领域的专业智能体</li>
+<li><strong>智能体切换</strong>：支持在交互过程中动态切换智能体</li>
+<li><strong>协作可视化</strong>：展示多智能体协作的执行过程</li>
+</ul>
+<h3 id="2_3">2. 三种交互模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>适用场景</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>命令行模式</strong></td>
+<td>快速执行、脚本集成</td>
+<td>简洁高效，支持管道操作</td>
+</tr>
+<tr>
+<td><strong>交互式模式</strong></td>
+<td>复杂任务、探索性开发</td>
+<td>自然语言对话，上下文保持</td>
+</tr>
+<tr>
+<td><strong>菜单模式</strong></td>
+<td>新手引导、功能发现</td>
+<td>可视化菜单，逐步引导</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3_3">3. 语境感知设计</h3>
+<ul>
+<li><strong>自动识别工作目录</strong>：启动时自动识别代码库上下文</li>
+<li><strong>语境保持</strong>：对话历史和任务状态在语境间保持</li>
+<li><strong>智能补全</strong>：基于代码库和语境的智能命令补全</li>
+<li><strong>项目配置</strong>：支持项目级别的配置覆盖</li>
+</ul>
+<h3 id="4-sdlc">4. 完整的 SDLC 支持</h3>
+<p>CLI 设计覆盖软件开发生命周期的各个阶段：</p>
+<ul>
+<li><strong>需求分析</strong>：<code>agently requirements</code></li>
+<li><strong>架构设计</strong>：<code>agently architecture</code></li>
+<li><strong>代码开发</strong>：<code>agently code</code></li>
+<li><strong>调试修复</strong>：<code>agently debug</code></li>
+<li><strong>测试验证</strong>：<code>agently test</code></li>
+<li><strong>代码审查</strong>：<code>agently review</code></li>
+<li><strong>版本控制</strong>：<code>agently git</code></li>
+<li><strong>部署发布</strong>：<code>agently deploy</code></li>
+</ul>
+<h3 id="5">5. 可观测性集成</h3>
+<ul>
+<li><strong>执行监控</strong>：实时显示任务执行进度</li>
+<li><strong>性能统计</strong>：记录和展示性能指标</li>
+<li><strong>日志追踪</strong>：完整的操作日志记录</li>
+<li><strong>错误诊断</strong>：详细的错误信息和修复建议</li>
+</ul>
+<hr />
+<h2 id="_20">实现建议</h2>
+<h3 id="cli_1">推荐的 CLI 框架</h3>
+<ol>
+<li><strong>Click</strong>：成熟的 Python CLI 框架，功能丰富</li>
+<li><strong>Typer</strong>：基于 Click，支持类型提示，现代化</li>
+<li><strong>Rich</strong>：富文本渲染，支持表格、进度条、Markdown</li>
+<li><strong>Prompt Toolkit</strong>：交互式输入，支持自动补全</li>
+<li><strong>Inquirer</strong>：交互式菜单，支持选择、确认等</li>
+</ol>
+<h3 id="_21">推荐的组合</h3>
+<ul>
+<li><strong>Typer</strong> + <strong>Rich</strong> + <strong>Prompt Toolkit</strong></li>
+<li>Typer：命令定义和参数解析</li>
+<li>Rich：富文本输出和界面渲染</li>
+<li>Prompt Toolkit：交互式输入和语境管理</li>
+</ul>
+<hr />
+<p><strong>文档版本</strong>: v1.0<br />
+<strong>最后更新</strong>: 2026-03-07<br />
+<strong>维护者</strong>: Agently 开发团队</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yunlongwen/agently" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

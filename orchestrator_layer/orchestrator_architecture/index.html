@@ -1,0 +1,3094 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agently - AI驱动的编程助手">
+      
+      
+        <meta name="author" content="Agently Team">
+      
+      
+        <link rel="canonical" href="https://yunlongwen.github.io/agently/orchestrator_layer/orchestrator_architecture/">
+      
+      
+        <link rel="prev" href="../../cli_layer/cli_architecture/">
+      
+      
+        <link rel="next" href="../../core_services_layer/core_services_architecture/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>协调层 - Agently</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agently" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Agently" class="md-header__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Agently
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              协调层
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/introduction/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  快速开始
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user/cli_usage/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  用户指南
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../architecture/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  架构设计
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../requirements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  技术文档
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Agently" class="md-nav__button md-logo" aria-label="Agently" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Agently
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yunlongwen/agently" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yunlongwen/agently
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    快速开始
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目简介
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    安装指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速入门
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用户指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    用户指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 使用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/cli_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    命令参考
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构设计
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    架构设计
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    系统架构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent_layer/agent_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    智能体层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli_layer/cli_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协调层
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协调层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文档说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        协调层架构概览
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心设计理念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心设计理念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-orchestration-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 编排优先 (Orchestration-First)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-skill-driven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 技能驱动 (Skill-Driven)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 多模型协调
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nexus 核心组件
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Nexus 核心组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-meta-planner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 元规划器 (Meta Planner)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. 元规划器 (Meta Planner)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心职责
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-meta-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 元调度器 (Meta Scheduler)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 元调度器 (Meta Scheduler)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心职责
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        调度算法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-meta-coordinator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 元协调器 (Meta Coordinator)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 元协调器 (Meta Coordinator)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心职责
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-meta-learner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 元学习器 (Meta Learner)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 元学习器 (Meta Learner)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心职责
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-meta-adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 元适配器 (Meta Adapter)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. 元适配器 (Meta Adapter)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心职责
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心协调模式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心协调模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        模式 1：技能驱动的协调模式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-persistent-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        模式 2：持续执行模式 (Persistent Execution)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        模式 3：智能体能力市场
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        模式 4：语境感知协调
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        状态管理系统
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="状态管理系统">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全局状态架构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        语境状态管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流引擎
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="工作流引擎">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流执行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        典型工作流示例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="典型工作流示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新功能开发工作流
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug修复工作流
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        智能体注册表
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="智能体注册表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        智能体发现与管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        智能体能力匹配
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心数据流
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心数据流">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        任务处理完整流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        错误处理与恢复
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="错误处理与恢复">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        错误处理架构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重试机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        性能优化
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        并发控制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓存策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        监控与可观测性
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="监控与可观测性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        监控指标
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心特性对比
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实施路线图
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="实施路线图">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: 基础架构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: 技能系统
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: 持续执行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: 能力市场
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: 语境融合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 学习优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        扩展机制
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="扩展机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自定义协调策略
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自定义工作流节点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core_services_layer/core_services_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    核心能力层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure_layer/infrastructure_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基础设施层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术文档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    技术文档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    需求文档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tech_selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    技术选型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer_skills/AGENTIC_CODING_BEST_PRACTICES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    开发指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../documentation_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文档部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="agently">Agently 智能体协调层架构设计</h1>
+<h2 id="_1">文档说明</h2>
+<p>本文档详细描述 Agently 智能体协调层的架构设计，包括 Nexus 综合智能体的核心组件、设计理念、任务调度机制、状态管理和工作流编排。</p>
+<hr />
+<h2 id="_2">协调层架构概览</h2>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Orchestrator_Layer[&quot;智能体协调层 (Orchestrator Layer)&quot;]
+        NEXUS[&quot;Nexus 综合智能体&quot;]
+
+        subgraph Nexus_Core[&quot;Nexus 核心&quot;]
+            META_PLANNER[&quot;元规划器&lt;br/&gt;(Meta Planner)&quot;]
+            META_SCHEDULER[&quot;元调度器&lt;br/&gt;(Meta Scheduler)&quot;]
+            META_COORDINATOR[&quot;元协调器&lt;br/&gt;(Meta Coordinator)&quot;]
+            META_LEARNER[&quot;元学习器&lt;br/&gt;(Meta Learner)&quot;]
+            META_ADAPTER[&quot;元适配器&lt;br/&gt;(Meta Adapter)&quot;]
+        end
+
+        subgraph State_Management[&quot;状态管理&quot;]
+            GLOBAL_STATE[&quot;全局状态&quot;]
+            CONTEXT_MGR[&quot;语境管理器&quot;]
+            EXECUTION_STATE[&quot;执行状态&quot;]
+        end
+
+        subgraph Workflow_Engine[&quot;工作流引擎&quot;]
+            WORKFLOW_DEF[&quot;工作流定义&quot;]
+            WORKFLOW_EXEC[&quot;工作流执行器&quot;]
+            WORKFLOW_MONITOR[&quot;工作流监控&quot;]
+        end
+    end
+
+    subgraph Agent_Registry[&quot;智能体注册表&quot;]
+        AGENT_DISCOVERY[&quot;智能体发现&quot;]
+        AGENT_METADATA[&quot;元数据管理&quot;]
+        AGENT_CAPABILITY[&quot;能力管理&quot;]
+    end
+
+    subgraph Specialist_Agents[&quot;专业智能体层&quot;]
+        AGENT1[&quot;需求分析智能体&quot;]
+        AGENT2[&quot;代码生成智能体&quot;]
+        AGENT3[&quot;测试智能体&quot;]
+        AGENT_N[&quot;...其他智能体&quot;]
+    end
+
+    CLI[&quot;CLI 层&quot;] --&gt; NEXUS
+    NEXUS --&gt; Nexus_Core
+    NEXUS --&gt; State_Management
+    NEXUS --&gt; Workflow_Engine
+
+    META_SCHEDULER --&gt; Agent_Registry
+    Agent_Registry --&gt; Specialist_Agents
+
+    style Orchestrator_Layer fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style Nexus_Core fill:#e1f5ff
+    style State_Management fill:#fff3e0
+    style Workflow_Engine fill:#e8f5e9
+</code></pre></div>
+<hr />
+<h2 id="_3">核心设计理念</h2>
+<h3 id="1-orchestration-first">1. 编排优先 (Orchestration-First)</h3>
+<p><strong>核心理念</strong>：
+- 真正的多智能体协作，而非单智能体串行执行
+- "不解决问题不罢休"的持续执行模式
+- 智能体之间的高效协调与信息传递</p>
+<p><strong>架构演进</strong>：</p>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Traditional_Model[&quot;传统模式&quot;]
+        SINGLE_AGENT[单一智能体]
+        ONE_PASS[一次执行]
+        SIMPLE_RETRY[简单重试]
+    end
+
+    subgraph Orchestration_Model[&quot;编排模式&quot;]
+        MULTI_AGENT[多智能体协作]
+        ITERATIVE[迭代优化]
+        PERSISTENT[持续执行]
+        GOAL_ORIENTED[目标导向]
+    end
+
+    subgraph Agently_Model[&quot;Agently 模式&quot;]
+        NEXUS_ORCH[Nexus 编排器]
+        SKILL_DRIVEN[技能驱动]
+        RESULT_VALIDATION[结果验证]
+        AUTO_IMPROVE[自动改进]
+    end
+
+    Traditional_Model --&gt; Orchestration_Model --&gt; Agently_Model
+</code></pre></div>
+<h3 id="2-skill-driven">2. 技能驱动 (Skill-Driven)</h3>
+<p><strong>核心理念</strong>：
+- 将开发经验固化为可复用的技能
+- 标准化流程，智能体主动遵循
+- 技能的组合、复用和持续优化</p>
+<p><strong>技能系统架构</strong>：</p>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Skill_System[&quot;技能系统架构&quot;]
+        SKILL_DEF[技能定义层]
+        SKILL_EXEC[技能执行层]
+        SKILL_LEARN[技能学习层]
+        SKILL_SHARE[技能共享层]
+    end
+
+    subgraph Skill_Definition[&quot;技能定义&quot;]
+        SKILL_MD[SKILL.md 文件]
+        WORKFLOW_DEF[工作流定义]
+        TOOL_CHAIN[工具链配置]
+        VALIDATION_RULE[验证规则]
+    end
+
+    subgraph Skill_Execution[&quot;技能执行&quot;]
+        SKILL_LOADER[技能加载器]
+        SKILL_PARSER[技能解析器]
+        SKILL_RUNNER[技能运行器]
+        SKILL_MONITOR[技能监控器]
+    end
+
+    subgraph Skill_Learning[&quot;技能学习&quot;]
+        EXEC_ANALYSIS[执行分析]
+        SKILL_OPTIMIZE[技能优化]
+        AUTO_GENERATE[自动生成]
+        FEEDBACK_LOOP[反馈循环]
+    end
+
+    subgraph Skill_Sharing[&quot;技能共享&quot;]
+        SKILL_REGISTRY[技能注册表]
+        SKILL_MARKET[技能市场]
+        VERSION_CTRL[版本控制]
+        COMMUNITY[社区贡献]
+    end
+
+    SKILL_DEF --&gt; Skill_Definition
+    SKILL_EXEC --&gt; Skill_Execution
+    SKILL_LEARN --&gt; Skill_Learning
+    SKILL_SHARE --&gt; Skill_Sharing
+</code></pre></div>
+<h3 id="3">3. 多模型协调</h3>
+<p><strong>核心理念</strong>：
+- 支持多个大模型协同工作
+- 根据任务特点动态选择最优模型
+- 成本与质量的智能平衡</p>
+<p><strong>多模型协调架构</strong>：</p>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Multi_Model_Orchestration[&quot;多模型协调&quot;]
+        TASK_ANALYZER[任务分析器]
+        MODEL_SELECTOR[模型选择器]
+        COST_OPTIMIZER[成本优化器]
+        QUALITY_VALIDATOR[质量验证器]
+    end
+
+    subgraph Model_Pool[&quot;模型池&quot;]
+        GPT4[OpenAI GPT-4&lt;br/&gt;高质量/高成本]
+        CLAUDE[Claude 3&lt;br/&gt;长上下文]
+        GEMINI[Google Gemini&lt;br/&gt;多模态]
+        LOCAL[本地模型&lt;br/&gt;低成本]
+    end
+
+    subgraph Selection_Strategy[&quot;选择策略&quot;]
+        COMPLEXITY_BASED[基于复杂度]
+        COST_BASED[基于成本]
+        QUALITY_BASED[基于质量要求]
+        SPEED_BASED[基于速度要求]
+    end
+
+    TASK_ANALYZER --&gt; Selection_Strategy
+    Selection_Strategy --&gt; MODEL_SELECTOR
+    MODEL_SELECTOR --&gt; Model_Pool
+    Model_Pool --&gt; QUALITY_VALIDATOR
+    COST_OPTIMIZER --&gt; MODEL_SELECTOR
+</code></pre></div>
+<hr />
+<h2 id="nexus">Nexus 核心组件</h2>
+<h3 id="1-meta-planner">1. 元规划器 (Meta Planner)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Meta_Planner[&quot;元规划器&quot;]
+        INPUT[用户输入]
+
+        subgraph Understanding[&quot;理解阶段&quot;]
+            INTENT[意图识别]
+            ENTITY[实体提取]
+            CONTEXT[上下文分析]
+        end
+
+        subgraph Analysis[&quot;分析阶段&quot;]
+            COMPLEXITY[复杂度评估]
+            DEPENDENCY[依赖分析]
+            RISK[风险评估]
+        end
+
+        subgraph Planning[&quot;规划阶段&quot;]
+            DECOMPOSITION[任务分解]
+            SEQUENCING[任务排序]
+            RESOURCE[资源分配]
+        end
+
+        subgraph Optimization[&quot;优化阶段&quot;]
+            PARALLEL[并行优化]
+            SHORTCUT[捷径识别]
+            FALLBACK[回退策略]
+        end
+
+        OUTPUT[执行计划]
+    end
+
+    INPUT --&gt; Understanding
+    Understanding --&gt; Analysis
+    Analysis --&gt; Planning
+    Planning --&gt; Optimization
+    Optimization --&gt; OUTPUT
+
+    INTENT --&gt; ENTITY --&gt; CONTEXT
+    COMPLEXITY --&gt; DEPENDENCY --&gt; RISK
+    DECOMPOSITION --&gt; SEQUENCING --&gt; RESOURCE
+    PARALLEL --&gt; SHORTCUT --&gt; FALLBACK
+</code></pre></div>
+<h4 id="_4">核心职责</h4>
+<ul>
+<li><strong>意图识别</strong>：理解用户的真实意图和需求</li>
+<li><strong>任务分解</strong>：将复杂任务分解为可执行的子任务</li>
+<li><strong>依赖分析</strong>：识别任务间的依赖关系</li>
+<li><strong>计划生成</strong>：生成优化的执行计划</li>
+<li><strong>风险评估</strong>：评估执行风险并制定回退策略</li>
+</ul>
+<h4 id="_5">工作流程</h4>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant User as 用户输入
+    participant Planner as 元规划器
+    participant Analyzer as 任务分析器
+    participant Optimizer as 计划优化器
+
+    User-&gt;&gt;Planner: 提交任务
+    Planner-&gt;&gt;Planner: 意图识别
+    Planner-&gt;&gt;Analyzer: 分析任务复杂度
+    Analyzer--&gt;&gt;Planner: 返回复杂度评估
+
+    Planner-&gt;&gt;Planner: 任务分解
+    Planner-&gt;&gt;Analyzer: 分析任务依赖
+    Analyzer--&gt;&gt;Planner: 返回依赖关系图
+
+    Planner-&gt;&gt;Optimizer: 优化执行计划
+    Optimizer--&gt;&gt;Planner: 返回优化方案
+
+    Planner-&gt;&gt;Planner: 生成执行计划
+    Planner--&gt;&gt;User: 返回计划详情
+</code></pre></div>
+<h3 id="2-meta-scheduler">2. 元调度器 (Meta Scheduler)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Meta_Scheduler[&quot;元调度器&quot;]
+        PLAN[执行计划]
+
+        subgraph Selection[&quot;智能体选择&quot;]
+            CAPABILITY_MATCH[能力匹配]
+            PERFORMANCE_EVAL[性能评估]
+            COST_ANALYSIS[成本分析]
+            LOAD_BALANCE[负载均衡]
+        end
+
+        subgraph Scheduling[&quot;调度策略&quot;]
+            SEQUENTIAL[串行调度]
+            PARALLEL[并行调度]
+            PIPELINE[流水线调度]
+            ADAPTIVE[自适应调度]
+        end
+
+        subgraph Execution[&quot;执行控制&quot;]
+            RESOURCE_ALLOC[资源分配]
+            TIMEOUT_CTRL[超时控制]
+            RETRY_MGMT[重试管理]
+            PRIORITY[优先级管理]
+        end
+
+        RESULT[调度结果]
+    end
+
+    PLAN --&gt; Selection
+    Selection --&gt; Scheduling
+    Scheduling --&gt; Execution
+    Execution --&gt; RESULT
+</code></pre></div>
+<h4 id="_6">核心职责</h4>
+<ul>
+<li><strong>智能体选择</strong>：根据任务特点选择最合适的智能体</li>
+<li><strong>调度策略</strong>：决定任务执行顺序（串行、并行、流水线）</li>
+<li><strong>资源分配</strong>：分配计算资源和 API 配额</li>
+<li><strong>负载均衡</strong>：平衡多个智能体的工作负载</li>
+<li><strong>超时控制</strong>：管理任务执行时间和重试机制</li>
+</ul>
+<h4 id="_7">调度算法</h4>
+<div class="highlight"><pre><span></span><code>flowchart LR
+    subgraph Scheduling_Algorithms[&quot;调度算法&quot;]
+        GREEDY[贪心算法]
+        ROUND_ROBIN[轮询算法]
+        PRIORITY_Q[优先级队列]
+        ML_BASED[机器学习调度]
+    end
+
+    TASK[任务队列] --&gt; SCHEDULER{调度器}
+
+    SCHEDULER --&gt; GREEDY
+    SCHEDULER --&gt; ROUND_ROBIN
+    SCHEDULER --&gt; PRIORITY_Q
+    SCHEDULER --&gt; ML_BASED
+
+    GREEDY --&gt; AGENT1[智能体1]
+    ROUND_ROBIN --&gt; AGENT2[智能体2]
+    PRIORITY_Q --&gt; AGENT3[智能体3]
+    ML_BASED --&gt; AGENT4[智能体4]
+</code></pre></div>
+<h3 id="3-meta-coordinator">3. 元协调器 (Meta Coordinator)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Meta_Coordinator[&quot;元协调器&quot;]
+        subgraph Context_Management[&quot;语境管理&quot;]
+            CONTEXT_PASS[语境传递]
+            CONTEXT_MERGE[语境合并]
+            CONTEXT_FILTER[语境过滤]
+            CONTEXT_PERSIST[语境持久化]
+        end
+
+        subgraph Communication[&quot;通信协调&quot;]
+            MSG_ROUTING[消息路由]
+            MSG_FORMAT[消息格式化]
+            MSG_QUEUE[消息队列]
+            SYNC_CTRL[同步控制]
+        end
+
+        subgraph Conflict_Resolution[&quot;冲突解决&quot;]
+            CONFLICT_DETECT[冲突检测]
+            CONFLICT_ANALYZE[冲突分析]
+            CONFLICT_RESOLVE[冲突解决]
+            CONFLICT_PREVENT[冲突预防]
+        end
+
+        subgraph Result_Integration[&quot;结果整合&quot;]
+            RESULT_COLLECT[结果收集]
+            RESULT_VALIDATE[结果验证]
+            RESULT_MERGE[结果合并]
+            RESULT_FORMAT[结果格式化]
+        end
+    end
+
+    AGENT1[智能体1] --&gt; Context_Management
+    AGENT2[智能体2] --&gt; Communication
+    AGENT3[智能体3] --&gt; Conflict_Resolution
+    AGENT4[智能体4] --&gt; Result_Integration
+</code></pre></div>
+<h4 id="_8">核心职责</h4>
+<ul>
+<li><strong>语境传递</strong>：在智能体间传递上下文信息</li>
+<li><strong>消息路由</strong>：管理智能体间的通信</li>
+<li><strong>冲突解决</strong>：检测和解决智能体间的冲突</li>
+<li><strong>结果整合</strong>：汇总多个智能体的执行结果</li>
+<li><strong>同步控制</strong>：协调并行执行的任务</li>
+</ul>
+<h3 id="4-meta-learner">4. 元学习器 (Meta Learner)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Meta_Learner[&quot;元学习器&quot;]
+        subgraph Data_Collection[&quot;数据收集&quot;]
+            EXEC_LOG[执行日志]
+            PERF_METRICS[性能指标]
+            USER_FEEDBACK[用户反馈]
+            ERROR_LOG[错误日志]
+        end
+
+        subgraph Analysis[&quot;分析阶段&quot;]
+            PATTERN[模式识别]
+            BOTTLENECK[瓶颈分析]
+            SUCCESS_FACTOR[成功因素分析]
+            FAILURE_ANALYSIS[失败分析]
+        end
+
+        subgraph Learning[&quot;学习阶段&quot;]
+            STRATEGY_OPT[策略优化]
+            PARAM_TUNING[参数调优]
+            MODEL_UPDATE[模型更新]
+            KNOWLEDGE_BASE[知识库更新]
+        end
+
+        subgraph Adaptation[&quot;自适应&quot;]
+            REAL_TIME_ADJ[实时调整]
+            PREDICTIVE_ADJ[预测性调整]
+            PERSONALIZATION[个性化适配]
+        end
+    end
+
+    Data_Collection --&gt; Analysis
+    Analysis --&gt; Learning
+    Learning --&gt; Adaptation
+</code></pre></div>
+<h4 id="_9">核心职责</h4>
+<ul>
+<li><strong>性能分析</strong>：分析执行历史和性能指标</li>
+<li><strong>策略优化</strong>：基于历史数据优化调度策略</li>
+<li><strong>参数调优</strong>：自动调整系统参数</li>
+<li><strong>知识积累</strong>：积累任务执行经验和最佳实践</li>
+<li><strong>自适应调整</strong>：根据实时反馈动态调整</li>
+</ul>
+<h3 id="5-meta-adapter">5. 元适配器 (Meta Adapter)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Meta_Adapter[&quot;元适配器&quot;]
+        subgraph User_Adaptation[&quot;用户适配&quot;]
+            PREF_LEARN[偏好学习]
+            STYLE_ADAPT[风格适配]
+            SKILL_LEVEL[技能水平适配]
+            HABIT_TRACK[习惯追踪]
+        end
+
+        subgraph Project_Adaptation[&quot;项目适配&quot;]
+            PROJECT_CONTEXT[项目上下文适配]
+            CODEBASE_ADAPT[代码库适配]
+            TEAM_NORM[团队规范适配]
+        end
+
+        subgraph Model_Adaptation[&quot;模型适配&quot;]
+            MODEL_SELECT[模型选择]
+            PROMPT_ADAPT[提示适配]
+            PARAM_ADAPT[参数适配]
+        end
+
+        subgraph Environment_Adaptation[&quot;环境适配&quot;]
+            RESOURCE_ADAPT[资源适配]
+            NETWORK_ADAPT[网络适配]
+            TIME_CONSTRAINT[时间约束适配]
+        end
+    end
+</code></pre></div>
+<h4 id="_10">核心职责</h4>
+<ul>
+<li><strong>用户偏好适配</strong>：学习并适应用户的偏好和习惯</li>
+<li><strong>项目上下文适配</strong>：根据项目特点调整策略</li>
+<li><strong>模型选择适配</strong>：根据任务选择最合适的模型</li>
+<li><strong>环境适配</strong>：根据运行环境调整配置</li>
+</ul>
+<hr />
+<h2 id="_11">核心协调模式</h2>
+<h3 id="1">模式 1：技能驱动的协调模式</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Skill_Driven_Orchestration[&quot;技能驱动编排&quot;]
+        USER_INPUT[用户输入]
+
+        subgraph Skill_Matching[&quot;技能匹配&quot;]
+            INTENT_RECOG[意图识别]
+            SKILL_SEARCH[技能搜索]
+            SKILL_RANK[技能排序]
+            SKILL_SELECT[技能选择]
+        end
+
+        subgraph Skill_Execution[&quot;技能执行&quot;]
+            SKILL_LOAD[加载技能]
+            WORKFLOW_GEN[生成工作流]
+            AGENT_ASSIGN[分配智能体]
+            EXEC_MONITOR[执行监控]
+        end
+
+        subgraph Result_Validation[&quot;结果验证&quot;]
+            OUTPUT_CHECK[输出检查]
+            QUALITY_SCORE[质量评分]
+            SATISFACTION_CHECK[满意度检查]
+            ITERATION[迭代改进]
+        end
+
+        USER_INPUT --&gt; Skill_Matching
+        Skill_Matching --&gt; Skill_Execution
+        Skill_Execution --&gt; Result_Validation
+
+        ITERATION --&gt;|不满意| Skill_Execution
+        ITERATION --&gt;|满意| FINAL_OUTPUT[最终结果]
+    end
+</code></pre></div>
+<p><strong>核心设计点</strong>：
+1. <strong>技能优先</strong>：先匹配技能，再协调智能体
+2. <strong>标准化流程</strong>：技能定义标准执行流程
+3. <strong>结果验证</strong>：自动验证执行结果，不满意则迭代
+4. <strong>持续优化</strong>：从执行中学习，优化技能</p>
+<h3 id="2-persistent-execution">模式 2：持续执行模式 (Persistent Execution)</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Persistent_Execution[&quot;持续执行模式&quot;]
+        GOAL[目标设定]
+
+        subgraph Execution_Loop[&quot;执行循环&quot;]
+            PLAN[制定计划]
+            EXEC[执行步骤]
+            VALIDATE[验证结果]
+            CHECK_GOAL{目标达成?}
+
+            CHECK_GOAL --&gt;|否| ANALYZE[分析问题]
+            ANALYZE --&gt; ADJUST[调整策略]
+            ADJUST --&gt; PLAN
+
+            CHECK_GOAL --&gt;|是| COMPLETE[任务完成]
+        end
+
+        subgraph Failure_Handling[&quot;失败处理&quot;]
+            MAX_RETRY{达到最大重试?}
+            ESCALATE[升级处理]
+            USER_HELP[请求用户帮助]
+            PARTIAL_RESULT[部分结果]
+        end
+
+        GOAL --&gt; Execution_Loop
+        Execution_Loop --&gt; MAX_RETRY
+        MAX_RETRY --&gt;|否| Execution_Loop
+        MAX_RETRY --&gt;|是| Failure_Handling
+    end
+</code></pre></div>
+<p><strong>核心设计点</strong>：
+1. <strong>目标导向</strong>：以达成目标为终止条件，而非执行次数
+2. <strong>自动调整</strong>：失败时自动分析原因并调整策略
+3. <strong>升级机制</strong>：无法解决时升级处理或请求用户帮助
+4. <strong>部分结果</strong>：即使未完全成功，也返回已有进展</p>
+<h3 id="3_1">模式 3：智能体能力市场</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Agent_Capability_Market[&quot;智能体能力市场&quot;]
+        subgraph Capability_Registry[&quot;能力注册表&quot;]
+            CAP_DEFINE[能力定义]
+            CAP_TAG[能力标签]
+            CAP_VERSION[版本管理]
+            CAP_DEPENDENCY[依赖管理]
+        end
+
+        subgraph Dynamic_Composition[&quot;动态组合&quot;]
+            REQ_ANALYSIS[需求分析]
+            CAP_MATCH[能力匹配]
+            AGENT_COMPOSE[智能体组合]
+            WORKFLOW_ORCH[工作流编排]
+        end
+
+        subgraph Runtime_Adaptation[&quot;运行时适配&quot;]
+            PERF_MONITOR[性能监控]
+            BOTTLENECK_DETECT[瓶颈检测]
+            DYNAMIC_REPLACE[动态替换]
+            LOAD_BALANCE[负载均衡]
+        end
+    end
+
+    CAP_DEFINE --&gt; REQ_ANALYSIS
+    CAP_TAG --&gt; CAP_MATCH
+    CAP_VERSION --&gt; AGENT_COMPOSE
+    CAP_DEPENDENCY --&gt; WORKFLOW_ORCH
+
+    WORKFLOW_ORCH --&gt; PERF_MONITOR
+    PERF_MONITOR --&gt; BOTTLENECK_DETECT
+    BOTTLENECK_DETECT --&gt; DYNAMIC_REPLACE
+    DYNAMIC_REPLACE --&gt; LOAD_BALANCE
+</code></pre></div>
+<p><strong>核心设计点</strong>：
+1. <strong>能力粒度</strong>：细粒度的能力定义，便于组合
+2. <strong>动态组合</strong>：根据需求动态组合智能体能力
+3. <strong>运行时优化</strong>：监控执行性能，动态调整组合
+4. <strong>版本管理</strong>：支持能力的版本控制和兼容性管理</p>
+<h3 id="4">模式 4：语境感知协调</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Context_Aware_Orchestration[&quot;语境感知编排&quot;]
+        subgraph Multi_Level_Context[&quot;多级语境&quot;]
+            PROJECT_CTX[项目语境]
+            TASK_CTX[任务语境]
+            USER_CTX[用户语境]
+            HISTORY_CTX[历史语境]
+        end
+
+        subgraph Context_Fusion[&quot;语境融合&quot;]
+            CONTEXT_WEIGHT[语境权重]
+            CONFLICT_RESOLVE[冲突解决]
+            CONTEXT_MERGE[语境合并]
+            PRIORITY_ADJUST[优先级调整]
+        end
+
+        subgraph Context_Application[&quot;语境应用&quot;]
+            PROMPT_ENHANCE[提示增强]
+            STRATEGY_ADJUST[策略调整]
+            EXPECTATION_SET[期望设定]
+            OUTPUT_FORMAT[输出格式化]
+        end
+    end
+
+    Multi_Level_Context --&gt; Context_Fusion
+    Context_Fusion --&gt; Context_Application
+</code></pre></div>
+<p><strong>核心设计点</strong>：
+1. <strong>多级语境</strong>：项目、任务、用户、历史四个层面的语境
+2. <strong>智能融合</strong>：自动解决语境冲突，调整权重
+3. <strong>动态应用</strong>：根据语境动态调整策略和输出
+4. <strong>持续学习</strong>：从语境交互中学习用户偏好</p>
+<hr />
+<h2 id="_12">状态管理系统</h2>
+<h3 id="_13">全局状态架构</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Global_State[&quot;全局状态管理&quot;]
+        subgraph State_Types[&quot;状态类型&quot;]
+            EXEC_STATE[&quot;执行状态&quot;]
+            AGENT_STATE[&quot;智能体状态&quot;]
+            TASK_STATE[&quot;任务状态&quot;]
+            CONTEXT_STATE[&quot;语境状态&quot;]
+        end
+
+        subgraph State_Storage[&quot;状态存储&quot;]
+            MEMORY_STORE[&quot;内存存储&quot;]
+            PERSISTENT_STORE[&quot;持久化存储&quot;]
+            CACHE_LAYER[&quot;缓存层&quot;]
+        end
+
+        subgraph State_Operations[&quot;状态操作&quot;]
+            STATE_READ[&quot;状态读取&quot;]
+            STATE_WRITE[&quot;状态写入&quot;]
+            STATE_UPDATE[&quot;状态更新&quot;]
+            STATE_SYNC[&quot;状态同步&quot;]
+        end
+    end
+
+    State_Types --&gt; State_Storage
+    State_Storage --&gt; State_Operations
+</code></pre></div>
+<h3 id="_14">语境状态管理</h3>
+<div class="highlight"><pre><span></span><code>flowchart LR
+    subgraph Context_State[&quot;语境状态&quot;]
+        CONVERSATION[&quot;对话历史&quot;]
+        TASK_CONTEXT[&quot;任务上下文&quot;]
+        AGENT_CONTEXT[&quot;智能体上下文&quot;]
+        USER_CONTEXT[&quot;用户上下文&quot;]
+        PROJECT_CONTEXT[&quot;项目上下文&quot;]
+    end
+
+    subgraph Context_Operations[&quot;语境操作&quot;]
+        SAVE[&quot;保存语境&quot;]
+        LOAD[&quot;加载语境&quot;]
+        MERGE[&quot;合并语境&quot;]
+        CLEAR[&quot;清除语境&quot;]
+    end
+
+    Context_State --&gt; Context_Operations
+</code></pre></div>
+<hr />
+<h2 id="_15">工作流引擎</h2>
+<h3 id="_16">工作流定义</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Workflow_Definition[&quot;工作流定义&quot;]
+        WORKFLOW_JSON[&quot;工作流 JSON/YAML&quot;]
+
+        subgraph Workflow_Structure[&quot;工作流结构&quot;]
+            NODES[&quot;节点定义&quot;]
+            EDGES[&quot;边定义&quot;]
+            CONDITIONS[&quot;条件定义&quot;]
+            VARIABLES[&quot;变量定义&quot;]
+        end
+
+        subgraph Node_Types[&quot;节点类型&quot;]
+            START[&quot;开始节点&quot;]
+            TASK[&quot;任务节点&quot;]
+            DECISION[&quot;决策节点&quot;]
+            PARALLEL[&quot;并行节点&quot;]
+            JOIN[&quot;汇聚节点&quot;]
+            END[&quot;结束节点&quot;]
+        end
+    end
+
+    WORKFLOW_JSON --&gt; Workflow_Structure
+    Workflow_Structure --&gt; Node_Types
+</code></pre></div>
+<h3 id="_17">工作流执行</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Workflow_Execution[&quot;工作流执行&quot;]
+        PARSER[&quot;工作流解析器&quot;]
+        VALIDATOR[&quot;工作流验证器&quot;]
+        EXECUTOR[&quot;工作流执行器&quot;]
+        MONITOR[&quot;工作流监控器&quot;]
+    end
+
+    subgraph Execution_Flow[&quot;执行流程&quot;]
+        START[&quot;开始&quot;]
+        NODE_EXEC[&quot;节点执行&quot;]
+        CONDITION_CHECK[&quot;条件检查&quot;]
+        BRANCH_SELECT[&quot;分支选择&quot;]
+        PARALLEL_EXEC[&quot;并行执行&quot;]
+        JOIN_WAIT[&quot;等待汇聚&quot;]
+        END[&quot;结束&quot;]
+    end
+
+    PARSER --&gt; VALIDATOR --&gt; EXECUTOR --&gt; MONITOR
+    START --&gt; NODE_EXEC --&gt; CONDITION_CHECK
+    CONDITION_CHECK --&gt; BRANCH_SELECT
+    BRANCH_SELECT --&gt; PARALLEL_EXEC
+    PARALLEL_EXEC --&gt; JOIN_WAIT --&gt; END
+</code></pre></div>
+<h3 id="_18">典型工作流示例</h3>
+<h4 id="_19">新功能开发工作流</h4>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    START([开始]) --&gt; REQ[需求分析]
+    REQ --&gt; ARCH[架构设计]
+    ARCH --&gt; CODE[代码生成]
+    CODE --&gt; TEST[测试生成]
+    TEST --&gt; REVIEW[代码审查]
+    REVIEW --&gt; DECISION{审查通过?}
+
+    DECISION --&gt;|否| CODE_FIX[代码修复]
+    CODE_FIX --&gt; REVIEW
+
+    DECISION --&gt;|是| GIT[Git提交]
+    GIT --&gt; DEPLOY[部署配置]
+    DEPLOY --&gt; END([结束])
+
+    style START fill:#e1f5ff
+    style END fill:#c8e6c9
+    style DECISION fill:#fff3e0
+</code></pre></div>
+<h4 id="bug">Bug修复工作流</h4>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    START([开始]) --&gt; DEBUG[调试分析]
+    DEBUG --&gt; LOCATE[Bug定位]
+    LOCATE --&gt; FIX[代码修复]
+    FIX --&gt; TEST[测试验证]
+    TEST --&gt; RESULT{测试通过?}
+
+    RESULT --&gt;|否| DEBUG_RETRY[重新调试]
+    DEBUG_RETRY --&gt; DEBUG
+
+    RESULT --&gt;|是| REVIEW[代码审查]
+    REVIEW --&gt; GIT[Git提交]
+    GIT --&gt; END([结束])
+
+    style START fill:#e1f5ff
+    style END fill:#c8e6c9
+    style RESULT fill:#fff3e0
+</code></pre></div>
+<hr />
+<h2 id="_20">智能体注册表</h2>
+<h3 id="_21">智能体发现与管理</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Agent_Registry[&quot;智能体注册表&quot;]
+        subgraph Discovery[&quot;智能体发现&quot;]
+            AUTO_DISCOVER[&quot;自动发现&quot;]
+            MANUAL_REGISTER[&quot;手动注册&quot;]
+            PLUGIN_LOAD[&quot;插件加载&quot;]
+        end
+
+        subgraph Metadata[&quot;元数据管理&quot;]
+            AGENT_INFO[&quot;智能体信息&quot;]
+            CAPABILITY_DESC[&quot;能力描述&quot;]
+            DEPENDENCY_MGMT[&quot;依赖管理&quot;]
+            VERSION_CTRL[&quot;版本控制&quot;]
+        end
+
+        subgraph Runtime[&quot;运行时管理&quot;]
+            LIFECYCLE[&quot;生命周期管理&quot;]
+            HEALTH_CHECK[&quot;健康检查&quot;]
+            PERF_MONITOR[&quot;性能监控&quot;]
+            RESOURCE_TRACK[&quot;资源追踪&quot;]
+        end
+    end
+
+    Discovery --&gt; Metadata --&gt; Runtime
+</code></pre></div>
+<h3 id="_22">智能体能力匹配</h3>
+<div class="highlight"><pre><span></span><code>flowchart LR
+    TASK_REQUIREMENTS[&quot;任务需求&quot;] --&gt; CAPABILITY_MATCHER[&quot;能力匹配器&quot;]
+
+    subgraph Agent_Pool[&quot;智能体池&quot;]
+        AGENT1[&quot;智能体1&lt;br/&gt;能力: A, B, C&quot;]
+        AGENT2[&quot;智能体2&lt;br/&gt;能力: B, C, D&quot;]
+        AGENT3[&quot;智能体3&lt;br/&gt;能力: A, D, E&quot;]
+    end
+
+    CAPABILITY_MATCHER --&gt; SCORING[&quot;能力评分&quot;]
+    SCORING --&gt; RANKING[&quot;智能体排名&quot;]
+    RANKING --&gt; SELECTION[&quot;最优选择&quot;]
+
+    AGENT1 --&gt; SCORING
+    AGENT2 --&gt; SCORING
+    AGENT3 --&gt; SCORING
+</code></pre></div>
+<hr />
+<h2 id="_23">核心数据流</h2>
+<h3 id="_24">任务处理完整流程</h3>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant CLI as CLI层
+    participant Nexus as Nexus
+    participant Planner as 元规划器
+    participant Scheduler as 元调度器
+    participant Coordinator as 元协调器
+    participant Agent as 专业智能体
+    participant Core as 核心服务
+
+    CLI-&gt;&gt;Nexus: 提交任务
+    Nexus-&gt;&gt;Planner: 请求任务规划
+    Planner-&gt;&gt;Planner: 意图识别 &amp; 任务分解
+    Planner--&gt;&gt;Nexus: 返回执行计划
+
+    Nexus-&gt;&gt;Scheduler: 请求调度
+    Scheduler-&gt;&gt;Scheduler: 智能体选择
+    Scheduler--&gt;&gt;Nexus: 返回调度方案
+
+    loop 执行每个子任务
+        Nexus-&gt;&gt;Coordinator: 准备执行
+        Coordinator-&gt;&gt;Coordinator: 语境准备
+
+        Nexus-&gt;&gt;Agent: 执行子任务
+        Agent-&gt;&gt;Core: 调用核心服务
+        Core--&gt;&gt;Agent: 返回结果
+        Agent--&gt;&gt;Nexus: 返回子任务结果
+
+        Nexus-&gt;&gt;Coordinator: 更新语境
+    end
+
+    Nexus-&gt;&gt;Coordinator: 整合结果
+    Coordinator--&gt;&gt;Nexus: 返回最终结果
+    Nexus--&gt;&gt;CLI: 返回给用户
+</code></pre></div>
+<hr />
+<h2 id="_25">错误处理与恢复</h2>
+<h3 id="_26">错误处理架构</h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Error_Handling[&quot;错误处理&quot;]
+        ERROR_DETECT[&quot;错误检测&quot;]
+        ERROR_CLASSIFY[&quot;错误分类&quot;]
+        ERROR_ANALYZE[&quot;错误分析&quot;]
+
+        subgraph Recovery_Strategies[&quot;恢复策略&quot;]
+            RETRY[&quot;重试机制&quot;]
+            FALLBACK[&quot;回退策略&quot;]
+            REROUTE[&quot;重新路由&quot;]
+            ABORT[&quot;中止执行&quot;]
+        end
+
+        ERROR_LOG[&quot;错误日志&quot;]
+        ERROR_REPORT[&quot;错误报告&quot;]
+    end
+
+    ERROR_DETECT --&gt; ERROR_CLASSIFY --&gt; ERROR_ANALYZE
+    ERROR_ANALYZE --&gt; Recovery_Strategies
+    Recovery_Strategies --&gt; ERROR_LOG --&gt; ERROR_REPORT
+</code></pre></div>
+<h3 id="_27">重试机制</h3>
+<div class="highlight"><pre><span></span><code>flowchart LR
+    TASK_FAIL[&quot;任务失败&quot;] --&gt; CHECK_RETRY{&quot;检查重试条件&quot;}
+
+    CHECK_RETRY --&gt;|可以重试| INCREMENT[&quot;增加重试计数&quot;]
+    CHECK_RETRY --&gt;|不可重试| FALLBACK[&quot;执行回退&quot;]
+
+    INCREMENT --&gt; DELAY[&quot;计算延迟时间&quot;]
+    DELAY --&gt; RETRY[&quot;重试执行&quot;]
+
+    RETRY --&gt; CHECK_MAX{&quot;达到最大重试?&quot;}
+    CHECK_MAX --&gt;|否| TASK_FAIL
+    CHECK_MAX --&gt;|是| FALLBACK
+
+    FALLBACK --&gt; REPORT[&quot;报告错误&quot;]
+</code></pre></div>
+<hr />
+<h2 id="_28">性能优化</h2>
+<h3 id="_29">并发控制</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Concurrency_Control[&quot;并发控制&quot;]
+        THREAD_POOL[&quot;线程池管理&quot;]
+        SEMAPHORE[&quot;信号量控制&quot;]
+        RATE_LIMITER[&quot;限流器&quot;]
+        CIRCUIT_BREAKER[&quot;熔断器&quot;]
+    end
+
+    subgraph Resource_Management[&quot;资源管理&quot;]
+        CPU_CTRL[&quot;CPU控制&quot;]
+        MEMORY_CTRL[&quot;内存控制&quot;]
+        API_QUOTA[&quot;API配额管理&quot;]
+    end
+
+    Concurrency_Control --&gt; Resource_Management
+</code></pre></div>
+<h3 id="_30">缓存策略</h3>
+<div class="highlight"><pre><span></span><code>flowchart LR
+    subgraph Cache_Strategy[&quot;缓存策略&quot;]
+        PLAN_CACHE[&quot;计划缓存&quot;]
+        AGENT_CACHE[&quot;智能体结果缓存&quot;]
+        CONTEXT_CACHE[&quot;语境缓存&quot;]
+        MODEL_CACHE[&quot;模型响应缓存&quot;]
+    end
+
+    subgraph Cache_Policies[&quot;缓存策略&quot;]
+        LRU[&quot;LRU淘汰&quot;]
+        TTL[&quot;TTL过期&quot;]
+        SIZE_LIMIT[&quot;大小限制&quot;]
+    end
+
+    Cache_Strategy --&gt; Cache_Policies
+</code></pre></div>
+<hr />
+<h2 id="_31">监控与可观测性</h2>
+<h3 id="_32">监控指标</h3>
+<div class="highlight"><pre><span></span><code>flowchart TB
+    subgraph Monitoring_Metrics[&quot;监控指标&quot;]
+        subgraph Performance_Metrics[&quot;性能指标&quot;]
+            EXEC_TIME[&quot;执行时间&quot;]
+            THROUGHPUT[&quot;吞吐量&quot;]
+            LATENCY[&quot;延迟&quot;]
+            RESOURCE_USAGE[&quot;资源使用&quot;]
+        end
+
+        subgraph Business_Metrics[&quot;业务指标&quot;]
+            SUCCESS_RATE[&quot;成功率&quot;]
+            TASK_COMPLETION[&quot;任务完成率&quot;]
+            USER_SATISFACTION[&quot;用户满意度&quot;]
+        end
+
+        subgraph System_Metrics[&quot;系统指标&quot;]
+            AGENT_HEALTH[&quot;智能体健康度&quot;]
+            QUEUE_DEPTH[&quot;队列深度&quot;]
+            ERROR_RATE[&quot;错误率&quot;]
+        end
+    end
+</code></pre></div>
+<hr />
+<h2 id="_33">核心特性对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>传统模式</th>
+<th>Agently Nexus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>执行模式</strong></td>
+<td>单次执行</td>
+<td>目标导向的持续执行</td>
+</tr>
+<tr>
+<td><strong>协调方式</strong></td>
+<td>预设流程</td>
+<td>技能驱动的动态编排</td>
+</tr>
+<tr>
+<td><strong>智能体协作</strong></td>
+<td>串行执行</td>
+<td>能力组合 + 动态替换</td>
+</tr>
+<tr>
+<td><strong>知识复用</strong></td>
+<td>提示词</td>
+<td>技能系统 + 自动学习</td>
+</tr>
+<tr>
+<td><strong>语境管理</strong></td>
+<td>简单上下文</td>
+<td>多级语境融合</td>
+</tr>
+<tr>
+<td><strong>结果验证</strong></td>
+<td>无验证</td>
+<td>自动验证 + 迭代改进</td>
+</tr>
+<tr>
+<td><strong>失败处理</strong></td>
+<td>简单重试</td>
+<td>智能分析 + 策略调整</td>
+</tr>
+<tr>
+<td><strong>学习机制</strong></td>
+<td>无</td>
+<td>持续学习 + 自动优化</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_34">实施路线图</h2>
+<h3 id="phase-1">Phase 1: 基础架构</h3>
+<ul>
+<li>实现 Nexus 五大核心组件</li>
+<li>建立智能体注册表</li>
+<li>实现基础工作流引擎</li>
+</ul>
+<h3 id="phase-2">Phase 2: 技能系统</h3>
+<ul>
+<li>实现 SKILL.md 解析器</li>
+<li>建立技能注册表</li>
+<li>实现技能驱动编排</li>
+</ul>
+<h3 id="phase-3">Phase 3: 持续执行</h3>
+<ul>
+<li>实现目标导向执行循环</li>
+<li>添加结果验证机制</li>
+<li>实现自动重试和策略调整</li>
+</ul>
+<h3 id="phase-4">Phase 4: 能力市场</h3>
+<ul>
+<li>实现细粒度能力定义</li>
+<li>添加动态组合算法</li>
+<li>实现运行时监控和替换</li>
+</ul>
+<h3 id="phase-5">Phase 5: 语境融合</h3>
+<ul>
+<li>实现多级语境管理</li>
+<li>添加语境融合算法</li>
+<li>实现语境感知决策</li>
+</ul>
+<h3 id="phase-6">Phase 6: 学习优化</h3>
+<ul>
+<li>实现性能分析</li>
+<li>添加策略优化</li>
+<li>实现自适应调整</li>
+</ul>
+<hr />
+<h2 id="_35">扩展机制</h2>
+<h3 id="_36">自定义协调策略</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 示例：自定义调度策略</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agently.orchestrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">SchedulingStrategy</span><span class="p">,</span> <span class="n">Task</span><span class="p">,</span> <span class="n">Agent</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomStrategy</span><span class="p">(</span><span class="n">SchedulingStrategy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">available_agents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Agent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Agent</span><span class="p">:</span>
+        <span class="c1"># 自定义选择逻辑</span>
+        <span class="n">best_agent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">best_score</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">available_agents</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_score</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+                <span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+                <span class="n">best_agent</span> <span class="o">=</span> <span class="n">agent</span>
+
+        <span class="k">return</span> <span class="n">best_agent</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">Agent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="c1"># 自定义评分逻辑</span>
+        <span class="n">capability_score</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">match_capability</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">requirements</span><span class="p">)</span>
+        <span class="n">performance_score</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_recent_performance</span><span class="p">()</span>
+        <span class="n">load_score</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_current_load</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">capability_score</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">performance_score</span> <span class="o">*</span> <span class="mf">0.3</span> <span class="o">+</span> <span class="n">load_score</span> <span class="o">*</span> <span class="mf">0.2</span>
+</code></pre></div>
+<h3 id="_37">自定义工作流节点</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 示例：自定义工作流节点</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agently.orchestrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkflowNode</span><span class="p">,</span> <span class="n">NodeContext</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomAnalysisNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;analysis_type&#39;</span><span class="p">,</span> <span class="s1">&#39;general&#39;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">NodeContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NodeResult</span><span class="p">:</span>
+        <span class="c1"># 自定义执行逻辑</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_input</span><span class="p">()</span>
+
+        <span class="c1"># 执行分析</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">perform_analysis</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+
+        <span class="c1"># 更新语境</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update_state</span><span class="p">({</span><span class="s1">&#39;analysis_complete&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">NodeResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">perform_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># 具体的分析逻辑</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="_38">总结</h2>
+<p>智能体协调层是 Agently 的核心，通过 Nexus 综合智能体实现：</p>
+<ol>
+<li><strong>编排优先</strong>：真正的多智能体协作，而非单智能体串行执行</li>
+<li><strong>技能驱动</strong>：以技能为核心组织智能体协作</li>
+<li><strong>持续执行</strong>：不解决问题不罢休的目标导向执行模式</li>
+<li><strong>能力组合</strong>：细粒度能力的动态组合和运行时优化</li>
+<li><strong>语境感知</strong>：多级语境的智能融合和动态应用</li>
+<li><strong>自动优化</strong>：从执行中持续学习和自适应调整</li>
+</ol>
+<p>这一层的设计使得 Agently 能够像一位经验丰富的技术负责人一样，统筹协调多个专业智能体，高效完成复杂的软件开发任务。</p>
+<hr />
+<p><strong>文档版本</strong>: v1.0<br />
+<strong>最后更新</strong>: 2026-03-07<br />
+<strong>维护者</strong>: Agently 开发团队</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yunlongwen/agently" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
