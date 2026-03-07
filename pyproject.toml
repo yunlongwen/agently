@@ -1,0 +1,217 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agently"
+version = "0.1.0"
+description = "AI-driven programming assistant for software development lifecycle"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Agently Development Team"}
+]
+maintainers = [
+    {name = "Agently Development Team"}
+]
+keywords = [
+    "ai",
+    "llm",
+    "assistant",
+    "programming",
+    "development",
+    "sdcl",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    # Core framework
+    "click>=8.1.7",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.1.0",
+
+    # AI framework
+    "langchain>=0.3.28",
+    "langchain-openai>=0.2.0",
+    "langchain-anthropic>=0.2.0",
+    "langchain-google-genai>=2.0.0",
+
+    # Code analysis
+    "tree-sitter>=0.20.0",
+    "tree-sitter-languages>=1.10.0",
+
+    # Git integration
+    "GitPython>=3.1.40",
+
+    # Testing
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+
+    # Logging
+    "structlog>=23.2.0",
+
+    # Network
+    "httpx>=0.27.0",
+    "websockets>=12.0",
+
+    # Configuration
+    "pyyaml>=6.0",
+    "tomli>=2.0.1; python_version < '3.11'",
+
+    # Storage
+    "aiosqlite>=0.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "types-PyYAML",
+    "pre-commit>=3.6.0",
+]
+
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-section-index>=0.3.0",
+]
+
+all = [
+    "agently[dev,docs]",
+]
+
+[project.scripts]
+agently = "agently.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yunlongwen/agently"
+Documentation = "https://yunlongwen.github.io/agently"
+Repository = "https://github.com/yunlongwen/agently"
+Issues = "https://github.com/yunlongwen/agently/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agently"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+]
+
+# Ruff configuration
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"tests/**/*.py" = ["S101"]  # Allow assert in tests
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# Mypy configuration
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tree_sitter.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langchain.*"
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=agently",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+asyncio_mode = "auto"
+markers = [
+    "unit: marks tests as unit tests",
+    "integration: marks tests as integration tests",
+    "slow: marks tests as slow",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src"]
+branch = true
+parallel = true
+
+[tool.coverage.paths]
+source = [
+    "src/",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+precision = 2
+show_missing = true
