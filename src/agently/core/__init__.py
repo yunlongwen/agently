@@ -1,5 +1,5 @@
-"""
-Core Services Layer - Core Capabilities
-"""
+"""Core Services Layer - Core Capabilities"""
 
-__all__ = []
+from agently.core.code_understanding import CodeUnderstandingService
+
+__all__ = ["CodeUnderstandingService"]
