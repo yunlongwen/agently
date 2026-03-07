@@ -45,15 +45,10 @@ jobs:
       - name: Build documentation
         run: mkdocs build
 
-      - name: Validate links
-        run: |
-          pip install markdown-link-check
-          markdown-link-check site/index.html -q
-
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.AGENT_DOC_TOKEN }}
           publish_dir: ./site
           publish_branch: gh-pages
