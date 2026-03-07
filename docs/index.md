@@ -56,6 +56,7 @@ agently chat --agent code-generator
 ### 技术文档
 - [需求文档](requirements.md)
 - [技术选型](tech_selection.md)
+- [部署架构](deployment_architecture.md)
 - [开发指南](developer_skills/AGENTIC_CODING_BEST_PRACTICES.md)
 - [文档部署](documentation_guide.md)
 
@@ -82,6 +83,7 @@ agently chat --agent code-generator
 ### 贡献者
 1. 阅读 [开发指南](developer_skills/AGENTIC_CODING_BEST_PRACTICES.md)
 2. 查看 [技术选型](tech_selection.md)
+3. 了解 [部署架构](deployment_architecture.md)
 
 ### 用户
 1. 阅读 [项目简介](user/introduction.md)
