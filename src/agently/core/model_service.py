@@ -1,9 +1,48 @@
 """Model service for AI model integration"""
 
+import os
 from typing import Any, Dict, List, Optional
 
 from agently.config import Settings
 from agently.logging import LoggingMixin
+
+
+class OpenAIChat:
+    """OpenAI chat model wrapper"""
+
+    def __init__(self, api_key: str, model: str = "gpt-4"):
+        self.api_key = api_key
+        self.model = model
+
+    def complete(self, prompt: str) -> Dict[str, Any]:
+        """Get completion
+
+        Args:
+            prompt: User prompt
+
+        Returns:
+            Completion response
+        """
+        return {"content": f"Mock response for: {prompt}"}
+
+
+class AnthropicChat:
+    """Anthropic chat model wrapper"""
+
+    def __init__(self, api_key: str, model: str = "claude-3-opus-20240229"):
+        self.api_key = api_key
+        self.model = model
+
+    def complete(self, prompt: str) -> Dict[str, Any]:
+        """Get completion
+
+        Args:
+            prompt: User prompt
+
+        Returns:
+            Completion response
+        """
+        return {"content": f"Mock response for: {prompt}"}
 
 
 class ModelService(LoggingMixin):
@@ -51,18 +90,19 @@ class ModelService(LoggingMixin):
         else:
             raise ValueError(f"Unsupported model provider: {model_provider}")
 
-    def get_chat_completion(self, prompt: str) -> Optional[str]:
+    def get_chat_completion(self, prompt: str) -> Optional[Dict[str, Any]]:
         """Get chat completion from LLM
 
         Args:
             prompt: User prompt
 
         Returns:
-            Model response or None if failed
+            Model response dict or None if failed
         """
-        # Mock implementation - in real code, call LLM API
+        api_key = self._get_api_key("openai")
         self.logger.info("Getting chat completion", prompt=prompt[:50])
-        return f"Mock response for: {prompt}"
+        model = OpenAIChat(api_key=api_key)
+        return model.complete(prompt)
 
     def get_embedding(self, text: str) -> Optional[List[float]]:
         """Get text embedding from LLM
@@ -73,6 +113,7 @@ class ModelService(LoggingMixin):
         Returns:
             Embedding vector or None if failed
         """
+        api_key = self._get_api_key("openai")
         self.logger.info("Getting embedding", text=text[:50])
         # Mock implementation
         return [0.1, 0.2, 0.3]

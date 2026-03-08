@@ -93,7 +93,7 @@ class TestAgentScheduler:
         scheduler = AgentScheduler()
         mock_agent = Mock()
         mock_agent.name = "test-agent"
-        mock_agent.can_handle = Mock(return_value=True)
+        mock_agent.capabilities = ["code-generation"]
 
         scheduler.register_agent(mock_agent)
         agent = scheduler.schedule_agent("code-generation", {})

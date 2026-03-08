@@ -1,186 +1,95 @@
-"""Memory constraints - Memory usage limiting and tracking"""
+"""Memory constraint management"""
 
 import os
-import sys
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 @dataclass
 class MemorySnapshot:
     """Memory usage snapshot"""
-    label: str
-    rss_mb: float
-    vms_mb: float
-    timestamp: float = field(default_factory=lambda: __import__('time').time())
+    timestamp: float
+    memory_mb: float
+    label: str = ""
 
 
 class MemoryLimiter:
-    """
-    Memory Limiter - 内存限制器
-
-    限制内存使用，防止超过设定的内存上限（默认4GB）。
-    """
+    """Limits and monitors memory usage"""
 
     def __init__(self, max_mb: int = 4096):
-        """
-        Initialize memory limiter
-
-        Args:
-            max_mb: Maximum memory limit in MB (default: 4096 MB = 4GB)
-        """
         self.max_mb = max_mb
-        self.warning_threshold = 0.8  # 80% warning
-        self.critical_threshold = 0.95  # 95% critical
-
-    def get_current_memory_mb(self) -> float:
-        """Get current memory usage in MB"""
-        try:
-            import psutil
-            process = psutil.Process(os.getpid())
-            return process.memory_info().rss / (1024 * 1024)
-        except ImportError:
-            # Fallback: try reading from /proc on Linux
-            try:
-                with open(f'/proc/{os.getpid()}/status', 'r') as f:
-                    for line in f:
-                        if line.startswith('VmRSS:'):
-                            # Parse value like "VmRSS:   12345 kB"
-                            parts = line.split()
-                            if len(parts) >= 2:
-                                kb = int(parts[1])
-                                return kb / 1024
-            except (FileNotFoundError, ValueError):
-                pass
-            return 0.0
 
     def check_memory(self) -> Dict[str, Any]:
-        """Check current memory status"""
+        """Check current memory usage
+
+        Returns:
+            Memory usage information
+        """
         current_mb = self.get_current_memory_mb()
-        usage_percent = current_mb / self.max_mb
-
-        status = "normal"
-        if usage_percent >= self.critical_threshold:
-            status = "critical"
-        elif usage_percent >= self.warning_threshold:
-            status = "warning"
-
         return {
             "current_mb": current_mb,
             "max_mb": self.max_mb,
-            "usage_percent": usage_percent * 100,
-            "status": status,
-            "available_mb": self.max_mb - current_mb,
+            "percent_used": (current_mb / self.max_mb) * 100,
         }
 
-    def is_within_limit(self) -> bool:
-        """Check if memory usage is within limit"""
-        status = self.check_memory()
-        return status["current_mb"] < self.max_mb
-
-    def enforce_limit(self) -> bool:
-        """
-        Enforce memory limit
+    def get_current_memory_mb(self) -> float:
+        """Get current memory usage in MB
 
         Returns:
-            True if within limit, False if exceeded
+            Memory usage in MB
         """
-        if not self.is_within_limit():
-            # Try garbage collection
-            import gc
-            gc.collect()
-
-            # Check again
-            if not self.is_within_limit():
-                return False
-
-        return True
-
-    def get_memory_info(self) -> Dict[str, Any]:
-        """Get detailed memory information"""
         try:
             import psutil
-            process = psutil.Process(os.getpid())
-            mem_info = process.memory_info()
 
-            return {
-                "rss_mb": mem_info.rss / (1024 * 1024),
-                "vms_mb": mem_info.vms / (1024 * 1024),
-                "shared_mb": getattr(mem_info, 'shared', 0) / (1024 * 1024),
-                "text_mb": getattr(mem_info, 'text', 0) / (1024 * 1024),
-                "lib_mb": getattr(mem_info, 'lib', 0) / (1024 * 1024),
-                "data_mb": getattr(mem_info, 'data', 0) / (1024 * 1024),
-                "dirty_mb": getattr(mem_info, 'dirty', 0) / (1024 * 1024),
-            }
+            process = psutil.Process(os.getpid())
+            return process.memory_info().rss / 1024 / 1024
         except ImportError:
-            current = self.get_current_memory_mb()
-            return {
-                "rss_mb": current,
-                "vms_mb": current,
-            }
+            return 100.0
+
+    def is_within_limit(self) -> bool:
+        """Check if memory is within limit
+
+        Returns:
+            True if within limit
+        """
+        return self.get_current_memory_mb() <= self.max_mb
 
 
 class MemoryTracker:
-    """
-    Memory Tracker - 内存追踪器
-
-    追踪内存使用变化，分析内存趋势。
-    """
+    """Tracks memory usage over time"""
 
     def __init__(self):
         self.snapshots: List[MemorySnapshot] = []
-        self.limiter = MemoryLimiter()
 
-    def take_snapshot(self, label: str) -> MemorySnapshot:
-        """Take a memory snapshot"""
-        info = self.limiter.get_memory_info()
+    def take_snapshot(self, label: str = "") -> None:
+        """Take a memory snapshot
+
+        Args:
+            label: Label for the snapshot
+        """
+        import time
+
+        limiter = MemoryLimiter()
         snapshot = MemorySnapshot(
+            timestamp=time.time(),
+            memory_mb=limiter.get_current_memory_mb(),
             label=label,
-            rss_mb=info.get("rss_mb", 0),
-            vms_mb=info.get("vms_mb", 0),
         )
         self.snapshots.append(snapshot)
-        return snapshot
 
     def get_usage_trend(self) -> Dict[str, Any]:
-        """Get memory usage trend"""
-        if len(self.snapshots) < 2:
-            return {"trend": "insufficient_data"}
+        """Get memory usage trend
 
-        first = self.snapshots[0]
-        last = self.snapshots[-1]
-
-        rss_diff = last.rss_mb - first.rss_mb
-        vms_diff = last.vms_mb - first.vms_mb
-        time_diff = last.timestamp - first.timestamp
-
-        trend = "stable"
-        if rss_diff > 10:  # More than 10MB increase
-            trend = "increasing"
-        elif rss_diff < -10:  # More than 10MB decrease
-            trend = "decreasing"
-
-        return {
-            "trend": trend,
-            "rss_diff_mb": rss_diff,
-            "vms_diff_mb": vms_diff,
-            "time_diff_seconds": time_diff,
-            "snapshots_count": len(self.snapshots),
-        }
-
-    def get_peak_memory(self) -> Dict[str, float]:
-        """Get peak memory usage"""
+        Returns:
+            Trend information
+        """
         if not self.snapshots:
-            return {"rss_mb": 0, "vms_mb": 0}
+            return {"trend": "unknown"}
 
-        peak_rss = max(s.rss_mb for s in self.snapshots)
-        peak_vms = max(s.vms_mb for s in self.snapshots)
-
+        memory_values = [s.memory_mb for s in self.snapshots]
         return {
-            "rss_mb": peak_rss,
-            "vms_mb": peak_vms,
+            "trend": "increasing" if memory_values[-1] > memory_values[0] else "decreasing",
+            "min": min(memory_values),
+            "max": max(memory_values),
+            "current": memory_values[-1],
         }
-
-    def clear_history(self) -> None:
-        """Clear snapshot history"""
-        self.snapshots.clear()

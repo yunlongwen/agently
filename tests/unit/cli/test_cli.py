@@ -62,5 +62,5 @@ class TestCLI:
     def test_cli_task_execute(self):
         """Test CLI task execute command"""
         runner = CliRunner()
-        result = runner.invoke(cli, ["task", "generate a function"])
+        result = runner.invoke(cli, ["task", "execute", "generate a function"])
         assert result.exit_code == 0
