@@ -60,6 +60,12 @@ agently chat --agent code-generator
 - [开发指南](developer_skills/AGENTIC_CODING_BEST_PRACTICES.md)
 - [文档部署](documentation_guide.md)
 
+### 任务管理
+- [任务总览](tasks/index.md)
+- [待完成任务](tasks/pending/)
+- [进行中任务](tasks/in-progress/)
+- [已归档任务](tasks/archived/)
+
 ### 用户文档
 - [项目简介](user/introduction.md)
 - [安装指南](user/installation.md)
