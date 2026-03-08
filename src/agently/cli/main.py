@@ -7,13 +7,27 @@ import click
 from agently.config import get_settings
 from agently.logging import configure_logging, get_logger
 
+LOGO = """
+    ▄▀█ █▀▀ █▀▀ █▄░█ ▀█▀ █░░ █▄█
+    █▀█ █▄█ ██▄ █░▀█ ░█░ █▄▄ ░█░
 
-@click.group()
+    🤖 Agently v0.1.0 | AI-Driven Programming Assistant
+    ────────────────────────────────────────────────────
+    Tips: Run 'agently --help' to see available commands
+"""
+
+
+@click.group(invoke_without_command=True)
 @click.version_option(version="0.1.0")
 @click.pass_context
 def cli(ctx: click.Context) -> None:
     """Agently - AI-driven programming assistant"""
     ctx.ensure_object(dict)
+
+    # 只在不带子命令时显示 logo
+    if ctx.invoked_subcommand is None:
+        click.echo(LOGO)
+        click.echo(ctx.get_help())
 
 
 @cli.command()
