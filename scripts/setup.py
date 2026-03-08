@@ -47,7 +47,9 @@ def main() -> int:
     if sys.version_info < (3, 9):
         print(f"  ❌ Python 3.9+ required, found {sys.version_info.major}.{sys.version_info.minor}")
         return 1
-    print(f"  ✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro} detected")
+    print(
+        f"  ✅ Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro} detected"
+    )
 
     # Step 2: Check if installed
     print_step(2, "Checking installation...")
