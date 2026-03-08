@@ -1,6 +1,5 @@
 """Tests for CLI Logo rendering"""
 
-from unittest.mock import patch
 
 from click.testing import CliRunner
 
