@@ -6,23 +6,30 @@ set -e
 
 echo "🔍 Running pre-push checks..."
 
-# Run linter
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# Change to repo root
+cd "$REPO_ROOT"
+
+# Run linter using python -m to ensure it works in virtual environments
 echo "📋 Running ruff..."
-ruff check . --fix || {
+python3 -m ruff check . --fix || {
     echo "❌ Ruff check failed. Please fix linting errors."
     exit 1
 }
 
 # Run formatter
 echo "✨ Running ruff format..."
-ruff format . || {
+python3 -m ruff format . || {
     echo "❌ Ruff format failed. Please fix formatting."
     exit 1
 }
 
 # Run tests
 echo "🧪 Running tests..."
-pytest --no-cov -q || {
+python3 -m pytest --no-cov -q || {
     echo "❌ Tests failed. Please fix failing tests."
     exit 1
 }
