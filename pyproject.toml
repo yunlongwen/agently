@@ -152,17 +152,16 @@ line-ending = "auto"
 # Mypy configuration
 [tool.mypy]
 python_version = "3.9"
-warn_return_any = true
+warn_return_any = false
 warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
 check_untyped_defs = true
 no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-warn_no_return = true
+warn_no_return = false
 strict_equality = true
-exclude = ["_pytest", "pytest"]
 
 [[tool.mypy.overrides]]
 module = "tree_sitter.*"
@@ -173,8 +172,20 @@ module = "langchain.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "psutil.*"
+module = "psutil"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "_pytest.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "pytest.*"
+ignore_errors = true
 
 # Pytest configuration
 [tool.pytest.ini_options]

@@ -3,7 +3,7 @@
 Integrates LangGraph with the Nexus orchestrator for workflow management.
 """
 
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Callable, Literal, Optional
 
 from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
@@ -31,13 +31,13 @@ class LangGraphWorkflow:
     """
 
     def __init__(self):
-        self._workflow: StateGraph | None = None
-        self._app: Any | None = None
-        self._nodes: dict[str, callable] = {}
+        self._workflow: Optional[StateGraph] = None
+        self._app: Optional[Any] = None
+        self._nodes: dict[str, Callable] = {}
         self._edges: list[tuple[str, str]] = []
-        self._conditional_edges: list[tuple[str, callable, dict[str, str]]] = []
+        self._conditional_edges: list[tuple[str, Callable, dict[str, str]]] = []
 
-    def add_node(self, name: str, func: callable) -> "LangGraphWorkflow":
+    def add_node(self, name: str, func: Callable) -> "LangGraphWorkflow":
         """Add a node to the workflow
 
         Args:
@@ -68,7 +68,7 @@ class LangGraphWorkflow:
     def add_conditional_edge(
         self,
         from_node: str,
-        condition: callable,
+        condition: Callable,
         mapping: dict[str, str],
     ) -> "LangGraphWorkflow":
         """Add a conditional edge
