@@ -1,5 +1,28 @@
 # 安装指南
 
+## 关于 PyPI 发布
+
+Agently 已发布到 [PyPI](https://pypi.org/project/agently/)，普通用户可以通过 `pip install agently` 安装。
+
+### 获取最新版本
+
+每次发布新版本时，GitHub Actions 会自动将包发布到 PyPI。用户可以：
+
+```bash
+# 查看可用版本
+pip index versions agently
+
+# 安装最新版本
+pip install --upgrade agently
+
+# 安装特定版本
+pip install agently==0.2.0
+```
+
+### 发布流程
+
+开发者发布新版本的步骤详见 [发布指南](../publishing-guide.md)。
+
 ## 系统要求
 
 ### 操作系统支持
