@@ -85,6 +85,7 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "pytest-cov>=4.1.0",
     "types-PyYAML",
+    "types-psutil",
     "pre-commit>=3.6.0",
 ]
 
@@ -161,6 +162,7 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
 strict_equality = true
+exclude = ["_pytest", "pytest"]
 
 [[tool.mypy.overrides]]
 module = "tree_sitter.*"
@@ -168,6 +170,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "langchain.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "psutil.*"
 ignore_missing_imports = true
 
 # Pytest configuration
