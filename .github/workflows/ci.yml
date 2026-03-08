@@ -30,9 +30,8 @@ jobs:
       - name: Run ruff format check
         run: ruff format --check .
 
-      # TODO: Re-enable mypy after fixing type annotations
-      # - name: Run mypy
-      #   run: mypy src/
+      - name: Run mypy type check
+        run: mypy src/agently
 
   test:
     name: Test
