@@ -173,6 +173,7 @@ warn_unused_ignores = true
 warn_no_return = false
 strict_equality = true
 
+# Ignore errors from third-party libraries
 [[tool.mypy.overrides]]
 module = "tree_sitter.*"
 ignore_missing_imports = true
@@ -209,7 +210,10 @@ ignore_errors = true
 module = "pytest.*"
 ignore_errors = true
 
-# Ignore errors from third-party library type hints
+[[tool.mypy.overrides]]
+module = "pytest_terminal"
+ignore_errors = true
+
 [[tool.mypy.overrides]]
 module = "agently.core.llm_service"
 disable_error_code = ["arg-type", "call-arg", "assignment", "attr-defined"]
