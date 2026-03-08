@@ -63,8 +63,10 @@ theme:
 
 plugins:
   - search
-  - minify
-  - git-revision-date-localized
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      enable_creation_date: true
   - git-committers:
       repository: yunlongwen/agently
       branch: master
