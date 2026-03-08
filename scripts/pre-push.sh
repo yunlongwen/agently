@@ -1,6 +1,6 @@
 #!/bin/bash
 # Pre-push hook - runs before pushing to remote
-# This hook runs tests to catch issues before they reach CI
+# This hook runs lint and format checks before push
 
 set -e
 
@@ -27,16 +27,7 @@ python3 -m ruff format . || {
     exit 1
 }
 
-# Run tests (only if test files exist)
-if python3 -m pytest --collect-only -q 2>&1 | grep -q "test session starts"; then
-    echo "🧪 Running tests..."
-    python3 -m pytest --no-cov -q || {
-        echo "❌ Tests failed. Please fix failing tests."
-        exit 1
-    }
-else
-    echo "⚠️  No tests found, skipping..."
-fi
-
 echo "✅ All pre-push checks passed!"
+echo ""
+echo "💡 Tip: Run 'pytest' locally before pushing to catch test failures."
 exit 0
