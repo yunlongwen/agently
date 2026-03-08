@@ -113,19 +113,15 @@ class LangGraphWorkflow:
 
         self._workflow = StateGraph(WorkflowState)
 
-        # Add nodes
         for name, func in self._nodes.items():
             self._workflow.add_node(name, func)
 
-        # Set entry point
         if hasattr(self, "_entry_point"):
             self._workflow.set_entry_point(self._entry_point)
 
-        # Add edges
         for from_node, to_node in self._edges:
             self._workflow.add_edge(from_node, to_node)
 
-        # Add conditional edges
         for from_node, condition, mapping in self._conditional_edges:
             self._workflow.add_conditional_edges(from_node, condition, mapping)
 
@@ -146,14 +142,11 @@ class LangGraphWorkflow:
             raise RuntimeError("Workflow not compiled. Call compile() first.")
 
         logger.info("Executing workflow", task=initial_state.get("task", "unknown"))
-
         result = self._app.invoke(initial_state)
-
         logger.info(
             "Workflow execution completed",
             result_steps=len(result.get("messages", [])),
         )
-
         return result
 
     def reset(self) -> "LangGraphWorkflow":
@@ -207,7 +200,6 @@ def create_simple_workflow() -> LangGraphWorkflow:
         .add_edge("plan", "execute")
         .compile()
     )
-
     return workflow
 
 
@@ -262,5 +254,4 @@ def create_conditional_workflow() -> LangGraphWorkflow:
         .add_edge("reject", END)
         .compile()
     )
-
     return workflow

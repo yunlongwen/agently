@@ -325,11 +325,9 @@ class TestPerformanceIntegration:
         from agently.config import Settings
         from agently.constraints.concurrency import SessionManager
         from agently.constraints.memory import MemoryLimiter
-        from agently.constraints.timing import TimeoutManager
 
         settings = Settings()
         memory_limiter = MemoryLimiter(max_mb=settings.max_memory_mb)
-        timeout_manager = TimeoutManager()
         session_manager = SessionManager(max_sessions=settings.max_concurrent_sessions)
 
         # Verify all constraints configured correctly

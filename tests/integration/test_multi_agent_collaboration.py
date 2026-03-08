@@ -13,7 +13,7 @@ class CollaborationState:
     """State for multi-agent collaboration"""
 
     task: str
-    agent_history: List[Dict[str, Any]] = field(default_factory=list)
+    agent_history: list[dict[str, Any]] = field(default_factory=list)
     current_agent: str = ""
     result: str = ""
     is_complete: bool = False
@@ -310,14 +310,14 @@ class TestMultiAgentCollaboration:
         """RED: Test routing based on agent capabilities"""
         from agently.agents.base import BaseAgent
 
-        def select_agent_by_capability(task: str, agents: Dict[str, BaseAgent]) -> BaseAgent:
+        def select_agent_by_capability(task: str, agents: dict[str, BaseAgent]) -> BaseAgent:
             """Select agent based on task keywords matching capabilities"""
             task_lower = task.lower()
             # Find best match by counting capability occurrences
             best_match = None
             best_score = 0
 
-            for name, agent in agents.items():
+            for _, agent in agents.items():
                 score = sum(1 for cap in agent.capabilities if cap.lower() in task_lower)
                 if score > best_score:
                     best_score = score

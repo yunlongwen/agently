@@ -101,7 +101,6 @@ class TreeSitterService:
         if node.type == "function_definition":
             result.append(node)
         elif node.type == "decorated_definition":
-            # For decorated definitions, the function_definition is a child
             for child in node.children:
                 if child.type == "function_definition":
                     result.append(child)
@@ -145,12 +144,10 @@ class TreeSitterService:
             Name string
         """
         if node.type == "function_definition":
-            # Function name is in the first identifier child
             for child in node.children:
                 if child.type == "identifier":
                     return child.text.decode("utf-8")
         elif node.type == "class_definition":
-            # Class name is in the first identifier child
             for child in node.children:
                 if child.type == "identifier":
                     return child.text.decode("utf-8")
@@ -169,7 +166,6 @@ class TreeSitterService:
         """
         parameters = []
 
-        # Find parameters node
         for child in node.children:
             if child.type == "parameters":
                 for param in child.children:
@@ -181,7 +177,6 @@ class TreeSitterService:
                             }
                         )
                     elif param.type == "typed_parameter":
-                        # Typed parameter: name: type
                         name_node = None
                         type_node = None
                         for p_child in param.children:
@@ -197,7 +192,6 @@ class TreeSitterService:
                                 }
                             )
                     elif param.type == "typed_default_parameter":
-                        # Typed default parameter: name: type = value
                         name_node = None
                         type_node = None
                         for p_child in param.children:
@@ -214,14 +208,11 @@ class TreeSitterService:
                                 }
                             )
                     elif param.type == "default_parameter":
-                        # Default parameter: name = value
-                        name_node = param.child_by_field_name("name")
-                        if name_node is None:
-                            # Fallback: find identifier
-                            for p_child in param.children:
-                                if p_child.type == "identifier":
-                                    name_node = p_child
-                                    break
+                        name_node = None
+                        for p_child in param.children:
+                            if p_child.type == "identifier":
+                                name_node = p_child
+                                break
                         if name_node:
                             parameters.append(
                                 {
@@ -243,26 +234,12 @@ class TreeSitterService:
         Returns:
             Return type string or None
         """
-        for child in node.children:
-            if child.type == "type":
-                # Check if this is a return type (comes after ->)
-                prev_sibling = None
-                for prev in node.children:
-                    if prev is child:
-                        break
-                    prev_sibling = prev
-
-                if prev_sibling and prev_sibling.type == "->":
-                    return child.text.decode("utf-8")
-
-        # Alternative: look for -> followed by type
         found_arrow = False
         for child in node.children:
             if found_arrow and child.type == "type":
                 return child.text.decode("utf-8")
             if child.type == "->":
                 found_arrow = True
-
         return None
 
     def get_function_decorators(self, tree: Tree, node: Node) -> list[str]:
@@ -276,8 +253,6 @@ class TreeSitterService:
             List of decorator names
         """
         decorators = []
-
-        # Find the decorated_definition parent by walking the tree
         decorated_parent = self._find_decorated_parent(tree, node)
 
         if decorated_parent:
@@ -290,7 +265,6 @@ class TreeSitterService:
                             for call_child in dec_child.children:
                                 if call_child.type == "identifier":
                                     decorators.append(call_child.text.decode("utf-8"))
-
         return decorators
 
     def _find_decorated_parent(self, tree: Tree, target_node: Node) -> Optional[Node]:
@@ -303,23 +277,10 @@ class TreeSitterService:
         Returns:
             decorated_definition node or None
         """
-
-        def search(node: Node, parent: Optional[Node]) -> Optional[Node]:
-            if node is target_node:
-                return parent if parent and parent.type == "decorated_definition" else None
-
-            for child in node.children:
-                result = search(child, node if node.type == "decorated_definition" else parent)
-                if result:
-                    return result
-            return None
-
-        # Special handling: check if target is inside a decorated_definition
         for child in tree.root_node.children:
             if child.type == "decorated_definition":
                 for grandchild in child.children:
                     if grandchild.type == "function_definition":
-                        # Check if this is our target by comparing positions
                         if (
                             grandchild.start_point == target_node.start_point
                             and grandchild.end_point == target_node.end_point
@@ -337,8 +298,6 @@ class TreeSitterService:
             List of base class nodes
         """
         bases = []
-
-        # Look for argument_list after class name (contains base classes)
         found_name = False
         for child in node.children:
             if found_name:
@@ -350,7 +309,6 @@ class TreeSitterService:
                     break
             elif child.type == "identifier":
                 found_name = True
-
         return bases
 
     def get_docstring(self, node: Node) -> Optional[str]:
@@ -362,15 +320,12 @@ class TreeSitterService:
         Returns:
             Docstring content or None
         """
-        # Look for expression_statement with string as first child in block
         for child in node.children:
             if child.type == "block":
-                # First child of block might be docstring
                 for block_child in child.children:
                     if block_child.type == "expression_statement":
                         for expr_child in block_child.children:
                             if expr_child.type == "string":
-                                # Get string_content from inside string
                                 for string_child in expr_child.children:
                                     if string_child.type == "string_content":
                                         return string_child.text.decode("utf-8")
@@ -400,7 +355,6 @@ class TreeSitterService:
         """
         if node.type == node_type:
             result.append(node)
-
         for child in node.children:
             self._collect_nodes(child, node_type, result)
 
@@ -426,7 +380,6 @@ class TreeSitterService:
         Returns:
             Node at position or None
         """
-        # Convert to byte position (tree-sitter uses 0-based row, column)
         return tree.root_node.descendant_for_point_range((line - 1, column), (line - 1, column))
 
     def get_node_text(self, node: Node, source_code: bytes) -> str:
@@ -473,61 +426,3 @@ class TreeSitterService:
         for node in nodes:
             identifiers.append(node.text.decode("utf-8"))
         return identifiers
-
-    def get_assignment_targets(self, tree: Tree) -> list[dict[str, Any]]:
-        """Get all assignment targets
-
-        Args:
-            tree: Tree-sitter Tree
-
-        Returns:
-            List of assignment info dictionaries
-        """
-        assignments = []
-        nodes = self.query_nodes(tree, "assignment")
-
-        for node in nodes:
-            left_node = node.child_by_field_name("left")
-            right_node = node.child_by_field_name("right")
-
-            if left_node:
-                assignments.append(
-                    {
-                        "target": left_node.text.decode("utf-8"),
-                        "value": right_node.text.decode("utf-8") if right_node else None,
-                        "line": node.start_point[0] + 1,
-                    }
-                )
-
-        return assignments
-
-    def get_call_nodes(self, tree: Tree) -> list[dict[str, Any]]:
-        """Get all function call nodes
-
-        Args:
-            tree: Tree-sitter Tree
-
-        Returns:
-            List of call info dictionaries
-        """
-        calls = []
-        nodes = self.query_nodes(tree, "call")
-
-        for node in nodes:
-            func_node = node.child_by_field_name("function")
-            if func_node:
-                calls.append(
-                    {
-                        "function": func_node.text.decode("utf-8"),
-                        "line": node.start_point[0] + 1,
-                        "arguments": [
-                            arg.text.decode("utf-8")
-                            for arg in node.child_by_field_name("arguments").children
-                            if arg.type != ","
-                        ]
-                        if node.child_by_field_name("arguments")
-                        else [],
-                    }
-                )
-
-        return calls

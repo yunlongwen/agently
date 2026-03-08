@@ -27,10 +27,10 @@ def hello(name: str) -> str:
 
 class Greeter:
     '''A greeter class'''
-    
+
     def __init__(self, greeting: str = "Hello"):
         self.greeting = greeting
-    
+
     def greet(self, name: str) -> str:
         return f"{self.greeting}, {name}!"
 """)
@@ -93,20 +93,20 @@ def multiply(x, y):
             f.write("""
 class Animal:
     '''Base animal class'''
-    
+
     def __init__(self, name: str):
         self.name = name
-    
+
     def speak(self) -> str:
         raise NotImplementedError
 
 class Dog(Animal):
     '''Dog class'''
-    
+
     def __init__(self, name: str, breed: str):
         super().__init__(name)
         self.breed = breed
-    
+
     def speak(self) -> str:
         return "Woof!"
 """)
@@ -319,7 +319,7 @@ def func1():
 
 class Class1:
     """Class 1 docstring"""
-    
+
     def method1(self):
         """Method 1 docstring"""
         pass

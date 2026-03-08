@@ -220,10 +220,10 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate a default function"""
         return '''def process_data(data: any) -> any:
     """Process input data and return result.
-    
+
     Args:
         data: Input data to process
-        
+
     Returns:
         Processed result
     """
@@ -235,11 +235,11 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate an add function"""
         return '''def add(a: int, b: int) -> int:
     """Add two numbers together.
-    
+
     Args:
         a: First number
         b: Second number
-        
+
     Returns:
         Sum of a and b
     """
@@ -249,10 +249,10 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate a generic function"""
         return '''def process_input(input_data: str) -> str:
     """Process input and return result.
-    
+
     Args:
         input_data: Input string to process
-        
+
     Returns:
         Processed result string
     """
@@ -264,43 +264,43 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate a generic class"""
         return '''class DataProcessor:
     """A class for processing data.
-    
+
     Attributes:
         name: Name of the processor
         data: Data to be processed
     """
-    
+
     def __init__(self, name: str = "default"):
         """Initialize the processor.
-        
+
         Args:
             name: Name of the processor
         """
         self.name = name
         self.data = []
-    
+
     def add_data(self, item: any) -> None:
         """Add data item to process.
-        
+
         Args:
             item: Data item to add
         """
         self.data.append(item)
-    
+
     def process(self) -> list:
         """Process all data.
-        
+
         Returns:
             List of processed results
         """
         return [self._transform(item) for item in self.data]
-    
+
     def _transform(self, item: any) -> any:
         """Transform a single item.
-        
+
         Args:
             item: Item to transform
-            
+
         Returns:
             Transformed item
         """
@@ -310,11 +310,11 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate a sort function"""
         return '''def sort_list(items: list, reverse: bool = False) -> list:
     """Sort a list of items.
-    
+
     Args:
         items: List of items to sort
         reverse: If True, sort in descending order
-        
+
     Returns:
         Sorted list
     """
@@ -324,10 +324,10 @@ class CodeGeneratorAgent(BaseAgent):
         """Generate a file handling function"""
         return '''def read_file(file_path: str) -> str:
     """Read content from a file.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         File content as string
     """
@@ -337,7 +337,7 @@ class CodeGeneratorAgent(BaseAgent):
 
 def write_file(file_path: str, content: str) -> None:
     """Write content to a file.
-    
+
     Args:
         file_path: Path to the file
         content: Content to write
@@ -363,10 +363,10 @@ def write_file(file_path: str, content: str) -> None:
 
         return f'''def {func_name}(input_data: any) -> any:
     """Generated function for: {task[:50]}...
-    
+
     Args:
         input_data: Input data
-        
+
     Returns:
         Processed result
     """

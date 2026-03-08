@@ -58,14 +58,14 @@ class TestLangGraphIntegration:
 
     def test_agent_workflow_with_langgraph(self):
         """RED: Test agent workflow using LangGraph"""
-        from typing import Annotated, List, TypedDict
+        from typing import Annotated, TypedDict
 
         from langgraph.graph import END, StateGraph
         from langgraph.graph.message import add_messages
 
         class AgentState(TypedDict):
             task: str
-            messages: Annotated[List[str], add_messages]
+            messages: Annotated[list[str], add_messages]
             agent: str
             output: str
 
@@ -161,7 +161,7 @@ class TestLangGraphIntegration:
 
     def test_nexus_agent_with_langgraph(self):
         """RED: Test Nexus agent integrated with LangGraph"""
-        from typing import Annotated, List, Literal, TypedDict
+        from typing import Annotated, Literal, TypedDict
 
         from langgraph.graph import END, StateGraph
         from langgraph.graph.message import add_messages
@@ -170,7 +170,7 @@ class TestLangGraphIntegration:
             task: str
             selected_agent: str
             agent_output: str
-            history: Annotated[List[str], add_messages]
+            history: Annotated[list[str], add_messages]
             is_complete: bool
 
         # Mock specialist agents
