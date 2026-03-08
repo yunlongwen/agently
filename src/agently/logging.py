@@ -59,7 +59,7 @@ def get_logger(name: Optional[str] = None) -> structlog.BoundLogger:
         Structured logger instance
     """
     logger = structlog.get_logger(name)
-    return logger  # type: ignore[no-any-return]
+    return logger
 
 
 class LoggingMixin:

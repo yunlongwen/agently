@@ -87,7 +87,7 @@ class TreeSitterService:
         Returns:
             List of function nodes
         """
-        nodes = []
+        nodes: list[Node] = []
         self._collect_function_nodes(tree.root_node, nodes)
         return nodes
 
@@ -146,13 +146,13 @@ class TreeSitterService:
         if node.type == "function_definition":
             for child in node.children:
                 if child.type == "identifier":
-                    return child.text.decode("utf-8")
+                    return child.text.decode("utf-8") if child.text else ""
         elif node.type == "class_definition":
             for child in node.children:
                 if child.type == "identifier":
-                    return child.text.decode("utf-8")
+                    return child.text.decode("utf-8") if child.text else ""
         elif node.type == "identifier":
-            return node.text.decode("utf-8")
+            return node.text.decode("utf-8") if node.text else ""
         return ""
 
     def get_function_parameters(self, node: Node) -> list[dict[str, Any]]:
@@ -172,7 +172,7 @@ class TreeSitterService:
                     if param.type == "identifier":
                         parameters.append(
                             {
-                                "name": param.text.decode("utf-8"),
+                                "name": param.text.decode("utf-8") if param.text else "",
                                 "type": None,
                             }
                         )
@@ -187,8 +187,12 @@ class TreeSitterService:
                         if name_node:
                             parameters.append(
                                 {
-                                    "name": name_node.text.decode("utf-8"),
-                                    "type": type_node.text.decode("utf-8") if type_node else None,
+                                    "name": name_node.text.decode("utf-8")
+                                    if name_node.text
+                                    else "",
+                                    "type": type_node.text.decode("utf-8")
+                                    if type_node and type_node.text
+                                    else None,
                                 }
                             )
                     elif param.type == "typed_default_parameter":
@@ -202,8 +206,12 @@ class TreeSitterService:
                         if name_node:
                             parameters.append(
                                 {
-                                    "name": name_node.text.decode("utf-8"),
-                                    "type": type_node.text.decode("utf-8") if type_node else None,
+                                    "name": name_node.text.decode("utf-8")
+                                    if name_node.text
+                                    else "",
+                                    "type": type_node.text.decode("utf-8")
+                                    if type_node and type_node.text
+                                    else None,
                                     "default": True,
                                 }
                             )
@@ -216,7 +224,9 @@ class TreeSitterService:
                         if name_node:
                             parameters.append(
                                 {
-                                    "name": name_node.text.decode("utf-8"),
+                                    "name": name_node.text.decode("utf-8")
+                                    if name_node.text
+                                    else "",
                                     "type": None,
                                     "default": True,
                                 }
@@ -237,7 +247,7 @@ class TreeSitterService:
         found_arrow = False
         for child in node.children:
             if found_arrow and child.type == "type":
-                return child.text.decode("utf-8")
+                return child.text.decode("utf-8") if child.text else None
             if child.type == "->":
                 found_arrow = True
         return None
@@ -260,11 +270,15 @@ class TreeSitterService:
                 if child.type == "decorator":
                     for dec_child in child.children:
                         if dec_child.type == "identifier":
-                            decorators.append(dec_child.text.decode("utf-8"))
+                            decorators.append(
+                                dec_child.text.decode("utf-8") if dec_child.text else ""
+                            )
                         elif dec_child.type == "call":
                             for call_child in dec_child.children:
                                 if call_child.type == "identifier":
-                                    decorators.append(call_child.text.decode("utf-8"))
+                                    decorators.append(
+                                        call_child.text.decode("utf-8") if call_child.text else ""
+                                    )
         return decorators
 
     def _find_decorated_parent(self, tree: Tree, target_node: Node) -> Optional[Node]:
@@ -328,7 +342,11 @@ class TreeSitterService:
                             if expr_child.type == "string":
                                 for string_child in expr_child.children:
                                     if string_child.type == "string_content":
-                                        return string_child.text.decode("utf-8")
+                                        return (
+                                            string_child.text.decode("utf-8")
+                                            if string_child.text
+                                            else ""
+                                        )
         return None
 
     def query_nodes(self, tree: Tree, node_type: str) -> list[Node]:
@@ -341,7 +359,7 @@ class TreeSitterService:
         Returns:
             List of matching nodes
         """
-        nodes = []
+        nodes: list[Node] = []
         self._collect_nodes(tree.root_node, node_type, nodes)
         return nodes
 
@@ -424,5 +442,6 @@ class TreeSitterService:
         identifiers = []
         nodes = self.query_nodes(tree, "identifier")
         for node in nodes:
-            identifiers.append(node.text.decode("utf-8"))
+            if node.text:
+                identifiers.append(node.text.decode("utf-8"))
         return identifiers

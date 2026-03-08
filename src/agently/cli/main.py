@@ -4,7 +4,7 @@ import sys
 
 import click
 
-from agently.cli.logo import LogoRenderer
+from agently.cli.interactive import start_interactive_shell
 from agently.config import get_settings
 from agently.logging import configure_logging, get_logger
 
@@ -16,18 +16,16 @@ def cli(ctx: click.Context) -> None:
     """Agently - AI-driven programming assistant"""
     ctx.ensure_object(dict)
 
-    # 只在不带子命令时显示 logo
+    # 只在不带子命令时启动交互式 shell
     if ctx.invoked_subcommand is None:
-        logo_renderer = LogoRenderer()
-        click.echo(logo_renderer.render())
-        click.echo(ctx.get_help())
+        start_interactive_shell()
 
 
 @cli.command()
 @click.pass_context
 def chat(ctx: click.Context) -> None:
     """Start interactive chat session"""
-    click.echo("Interactive chat coming soon!")
+    start_interactive_shell()
 
 
 @cli.command()

@@ -75,6 +75,9 @@ dependencies = [
 
     # Storage
     "aiosqlite>=0.19.0",
+
+    # Interactive CLI
+    "prompt-toolkit>=3.0.0",
 ]
 
 [project.optional-dependencies]
@@ -118,6 +121,13 @@ include = [
     "/tests",
     "/docs",
 ]
+
+# PyPI publishing configuration
+[tool.hatch.publish.index]
+disable = false
+
+[tool.hatch.version]
+path = "src/agently/__init__.py"
 
 # Ruff configuration
 [tool.ruff]
