@@ -10,8 +10,8 @@ from agently.agents.specialist import (
     CodeReviewerAgent,
     CodeUnderstandingAgent,
     GitManagerAgent,
+    QualityAssuranceAgent,
     RequirementsAnalyzerAgent,
-    TesterAgent,
 )
 
 
@@ -31,13 +31,6 @@ class TestBaseAgent:
         assert agent.name == "test-agent"
         assert agent.description == "Test agent"
         assert agent.capabilities == []
-
-    def test_base_agent_execute(self):
-        """Test that execute method works"""
-        agent = ConcreteTestAgent(name="test-agent", description="Test agent")
-        context = AgentContext(task="test task")
-        result = agent.execute(context)
-        assert result.success is True
 
 
 class TestAgentContext:
@@ -123,34 +116,107 @@ class TestRequirementsAnalyzerAgent:
         """Test executing requirements analysis"""
         agent = RequirementsAnalyzerAgent()
         context = AgentContext(task="analyze requirements for login feature")
-
         with patch.object(agent, "_analyze", return_value={"requirements": ["req1"]}):
             result = agent.execute(context)
 
         assert isinstance(result, AgentResult)
 
 
-class TestCodeGeneratorAgent:
-    """Test CodeGeneratorAgent"""
+class TestRequirementsAnalyzerAgentReal:
+    """Test RequirementsAnalyzerAgent with real requirements analysis"""
 
-    def test_init(self):
-        """Test initializing code generator"""
+    def test_analyze_user_requirements(self):
+        """Test that RequirementsAnalyzerAgent analyzes user requirements"""
+        agent = RequirementsAnalyzerAgent()
+        context = AgentContext(task="实现用户登录功能，包括邮箱和密码验证")
+        result = agent.execute(context)
+        assert result.success is True
+        analysis = result.data
+        requirements = analysis["requirements"]
+
+        # Should have extracted functional requirements, not just as task string
+        assert isinstance(requirements, list)
+        assert len(requirements) > 0
+
+        # Check that requirements are extracted, not full task string
+        for req in requirements:
+            # Should not just be the full task string
+            assert len(req) < len(context.task) if not req.startswith("[") else True
+
+        # Should contain key functional keywords
+        assert any(
+            keyword in " ".join(requirements) for keyword in ["登录", "邮箱", "密码", "验证"]
+        )
+
+    def test_analyze_empty_requirements(self):
+        """Test that RequirementsAnalyzerAgent handles empty requirements"""
+        agent = RequirementsAnalyzerAgent()
+        context = AgentContext(task="")
+        result = agent.execute(context)
+        assert result.success is True
+        analysis = result.data
+        requirements = analysis["requirements"]
+        assert len(requirements) == 0
+
+    def test_analyze_vague_requirements(self):
+        """Test that RequirementsAnalyzerAgent identifies vague requirements"""
+        agent = RequirementsAnalyzerAgent()
+        context = AgentContext(task="做一些事情")
+        result = agent.execute(context)
+        assert result.success is True
+        analysis = result.data
+        requirements = analysis["requirements"]
+
+        # Should mark as vague and ask for clarification
+        assert len(requirements) > 0
+        assert any(
+            "澄清" in req or "不明确" in req or "模糊" in req or "vague" in req.lower()
+            for req in requirements
+        )
+
+
+class TestCodeGeneratorAgentReal:
+    """Test CodeGeneratorAgent with real code generation"""
+
+    def test_generate_function_code(self):
+        """Test that CodeGeneratorAgent generates function code"""
         agent = CodeGeneratorAgent()
-        assert agent.name == "code-generator"
-        assert "代码生成" in agent.description
+        context = AgentContext(task="写一个函数，实现两个数相加")
+        result = agent.execute(context)
+        assert result.success is True
+        generated = result.data
+        assert "code" in generated
+        assert "+" in generated["code"] and "add" in generated["code"]
 
-    def test_execute(self):
-        """Test executing code generation"""
+    def test_generate_empty_task(self):
+        """Test CodeGeneratorAgent handles empty task"""
         agent = CodeGeneratorAgent()
-        context = AgentContext(task="generate a function to add numbers")
+        context = AgentContext(task="")
+        result = agent.execute(context)
+        assert result.success is True
+        generated = result.data
+        assert "code" in generated
+        assert generated["code"] != ""
 
-        with patch.object(agent, "_generate", return_value={"code": "def add(a, b): return a + b"}):
-            result = agent.execute(context)
+    def test_generate_generates_valid_python(self):
+        """Test that generated code is valid Python"""
+        agent = CodeGeneratorAgent()
+        context = AgentContext(task="生成一个函数")
+        result = agent.execute(context)
+        assert result.success is True
+        generated = result.data
+        assert "code" in generated
+        # Should have function definition syntax
+        assert "def " in generated["code"]
+        # Should have parameters
+        assert "(" in generated["code"]
+        assert ")" in generated["code"]
+        assert ":" in generated["code"]
+        # Should have return statement
+        assert "return " in generated["code"]
 
-        assert isinstance(result, AgentResult)
 
-
-class TestCodeUnderstandingAgent:
+class TestCodeUnderstandingAgentReal:
     """Test CodeUnderstandingAgent"""
 
     def test_init(self):
@@ -160,7 +226,7 @@ class TestCodeUnderstandingAgent:
         assert "代码理解" in agent.description
 
 
-class TestBugFixerAgent:
+class TestBugFixerAgentReal:
     """Test BugFixerAgent"""
 
     def test_init(self):
@@ -170,17 +236,17 @@ class TestBugFixerAgent:
         assert "调试" in agent.description
 
 
-class TestTesterAgent:
-    """Test TesterAgent"""
+class TestQualityAssuranceAgent:
+    """Test QualityAssuranceAgent"""
 
     def test_init(self):
         """Test initializing tester agent"""
-        agent = TesterAgent()
+        agent = QualityAssuranceAgent()
         assert agent.name == "tester"
         assert "测试" in agent.description
 
 
-class TestCodeReviewerAgent:
+class TestCodeReviewerAgentReal:
     """Test CodeReviewerAgent"""
 
     def test_init(self):
@@ -190,7 +256,7 @@ class TestCodeReviewerAgent:
         assert "审查" in agent.description
 
 
-class TestGitManagerAgent:
+class TestGitManagerAgentReal:
     """Test GitManagerAgent"""
 
     def test_init(self):

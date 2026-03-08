@@ -4,17 +4,9 @@ import sys
 
 import click
 
+from agently.cli.logo import LogoRenderer
 from agently.config import get_settings
 from agently.logging import configure_logging, get_logger
-
-LOGO = """
-    ▄▀█ █▀▀ █▀▀ █▄░█ ▀█▀ █░░ █▄█
-    █▀█ █▄█ ██▄ █░▀█ ░█░ █▄▄ ░█░
-
-    🤖 Agently v0.1.0 | AI-Driven Programming Assistant
-    ────────────────────────────────────────────────────
-    Tips: Run 'agently --help' to see available commands
-"""
 
 
 @click.group(invoke_without_command=True)
@@ -26,7 +18,8 @@ def cli(ctx: click.Context) -> None:
 
     # 只在不带子命令时显示 logo
     if ctx.invoked_subcommand is None:
-        click.echo(LOGO)
+        logo_renderer = LogoRenderer()
+        click.echo(logo_renderer.render())
         click.echo(ctx.get_help())
 
 
