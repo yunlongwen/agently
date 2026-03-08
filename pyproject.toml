@@ -51,6 +51,7 @@ dependencies = [
 
     # Code analysis
     "tree-sitter>=0.20.0",
+    "tree-sitter-python>=0.23.0",
     "tree-sitter-languages>=1.10.0",
 
     # Git integration
