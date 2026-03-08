@@ -1,16 +1,17 @@
 """Workflow engine for orchestrator"""
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
 class WorkflowDefinition:
     """Defines a workflow"""
-    steps: List[Dict[str, Any]] = field(default_factory=list)
+
+    steps: list[dict[str, Any]] = field(default_factory=list)
     name: str = "default-workflow"
 
-    def add_step(self, step: Dict[str, Any]) -> None:
+    def add_step(self, step: dict[str, Any]) -> None:
         """Add a step to workflow
 
         Args:
@@ -22,7 +23,7 @@ class WorkflowDefinition:
 class WorkflowEngine:
     """Executes workflows"""
 
-    def execute(self, workflow: WorkflowDefinition) -> Dict[str, Any]:
+    def execute(self, workflow: WorkflowDefinition) -> dict[str, Any]:
         """Execute a workflow
 
         Args:
@@ -38,7 +39,7 @@ class WorkflowEngine:
 
         return {"success": True, "results": results}
 
-    def _execute_step(self, step: Dict[str, Any]) -> Dict[str, Any]:
+    def _execute_step(self, step: dict[str, Any]) -> dict[str, Any]:
         """Execute a single step
 
         Args:

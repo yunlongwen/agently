@@ -46,16 +46,12 @@ class Settings(BaseSettings):
     # OpenAI configuration
     openai_api_key: str = Field(default="", description="OpenAI API key")
     openai_model: str = Field(default="gpt-4", description="Model name")
-    openai_temperature: float = Field(
-        default=0.7, ge=0.0, le=2.0, description="Temperature"
-    )
+    openai_temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Temperature")
     openai_max_tokens: int = Field(default=4096, gt=0, description="Max tokens")
 
     # Anthropic configuration
     anthropic_api_key: str = Field(default="", description="Anthropic API key")
-    anthropic_model: str = Field(
-        default="claude-3-opus-20240229", description="Model name"
-    )
+    anthropic_model: str = Field(default="claude-3-opus-20240229", description="Model name")
     anthropic_max_tokens: int = Field(default=4096, gt=0, description="Max tokens")
 
     # Logging
@@ -75,6 +71,7 @@ class Settings(BaseSettings):
     timeout_simple: int = Field(default=30, ge=1, description="Simple timeout seconds")
     timeout_medium: int = Field(default=60, ge=1, description="Medium timeout seconds")
     timeout_complex: int = Field(default=120, ge=1, description="Complex timeout seconds")
+
 
 # Global settings instance
 _settings: Optional[Settings] = None

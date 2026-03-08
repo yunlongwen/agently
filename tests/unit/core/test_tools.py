@@ -1,12 +1,9 @@
 """Tests for tool system"""
 
-import pytest
-from unittest.mock import Mock, patch
-
 from agently.core.tools import (
     BaseTool,
-    ToolRegistry,
     ToolExecutor,
+    ToolRegistry,
     ToolResult,
     tool,
 )
@@ -34,6 +31,7 @@ class TestBaseTool:
 
     def test_tool_creation(self):
         """Test creating a tool"""
+
         class EchoTool(BaseTool):
             name = "echo"
             description = "Echo the input"
@@ -47,6 +45,7 @@ class TestBaseTool:
 
     def test_tool_execution(self):
         """Test executing a tool"""
+
         class EchoTool(BaseTool):
             name = "echo"
             description = "Echo the input"
@@ -61,6 +60,7 @@ class TestBaseTool:
 
     def test_tool_with_error(self):
         """Test tool that raises error"""
+
         class ErrorTool(BaseTool):
             name = "error_tool"
             description = "Always errors"
@@ -79,6 +79,7 @@ class TestToolDecorator:
 
     def test_decorator_creates_tool(self):
         """Test that decorator creates a tool"""
+
         @tool(name="add", description="Add two numbers")
         def add_numbers(a: int, b: int) -> int:
             return a + b
@@ -88,6 +89,7 @@ class TestToolDecorator:
 
     def test_decorated_tool_execution(self):
         """Test executing decorated tool"""
+
         @tool(name="multiply", description="Multiply two numbers")
         def multiply(a: int, b: int) -> int:
             return a * b
@@ -107,6 +109,7 @@ class TestToolRegistry:
         class TestTool(BaseTool):
             name = "test"
             description = "Test tool"
+
             def run(self) -> ToolResult:
                 return ToolResult(success=True, output="test")
 
@@ -120,6 +123,7 @@ class TestToolRegistry:
         class EchoTool(BaseTool):
             name = "echo"
             description = "Echo tool"
+
             def run(self, text: str) -> ToolResult:
                 return ToolResult(success=True, output=text)
 
@@ -143,12 +147,14 @@ class TestToolRegistry:
         class Tool1(BaseTool):
             name = "tool1"
             description = "Tool 1"
+
             def run(self) -> ToolResult:
                 return ToolResult(success=True)
 
         class Tool2(BaseTool):
             name = "tool2"
             description = "Tool 2"
+
             def run(self) -> ToolResult:
                 return ToolResult(success=True)
 
@@ -166,6 +172,7 @@ class TestToolRegistry:
         class TestTool(BaseTool):
             name = "test"
             description = "Test"
+
             def run(self) -> ToolResult:
                 return ToolResult(success=True)
 
@@ -186,6 +193,7 @@ class TestToolExecutor:
         class EchoTool(BaseTool):
             name = "echo"
             description = "Echo tool"
+
             def run(self, text: str) -> ToolResult:
                 return ToolResult(success=True, output=text)
 
@@ -212,6 +220,7 @@ class TestToolExecutor:
         class AddTool(BaseTool):
             name = "add"
             description = "Add numbers"
+
             def run(self, a: int, b: int) -> ToolResult:
                 return ToolResult(success=True, output=a + b)
 

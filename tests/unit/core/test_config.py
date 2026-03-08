@@ -4,9 +4,8 @@ import os
 from pathlib import Path
 
 import pytest
-from pydantic import ValidationError
-
 from agently.config import Settings, get_settings, reset_settings
+from pydantic import ValidationError
 
 
 class TestSettings:
@@ -66,6 +65,7 @@ class TestSettings:
 
         with pytest.raises(ValidationError):
             Settings(openai_temperature=2.1)
+
     def test_paths(self):
         """Test default paths"""
         settings = Settings()

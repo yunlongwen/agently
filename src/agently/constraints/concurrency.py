@@ -1,17 +1,18 @@
 """Concurrency constraint management"""
 
 import threading
-from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
 import uuid
+from dataclasses import dataclass, field
+from typing import Any, Optional
 
 
 @dataclass
 class Session:
     """Session information"""
+
     session_id: str
     created_at: float
-    data: Dict[str, Any] = field(default_factory=dict)
+    data: dict[str, Any] = field(default_factory=dict)
 
 
 class ConcurrencyLimiter:
@@ -55,7 +56,7 @@ class SessionManager:
 
     def __init__(self, max_sessions: int = 5):
         self.max_sessions = max_sessions
-        self.sessions: Dict[str, Session] = {}
+        self.sessions: dict[str, Session] = {}
         self._lock = threading.Lock()
 
     def create_session(self) -> str:

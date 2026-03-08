@@ -3,7 +3,7 @@
 import ast
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Optional
 
 from agently.logging import get_logger
 
@@ -13,13 +13,14 @@ logger = get_logger(__name__)
 @dataclass
 class FunctionInfo:
     """Information about a function"""
+
     name: str
-    args: List[str] = field(default_factory=list)
+    args: list[str] = field(default_factory=list)
     returns: Optional[str] = None
     docstring: Optional[str] = None
     line_start: int = 0
     line_end: int = 0
-    decorators: List[str] = field(default_factory=list)
+    decorators: list[str] = field(default_factory=list)
     is_async: bool = False
     is_method: bool = False
 
@@ -27,21 +28,23 @@ class FunctionInfo:
 @dataclass
 class ClassInfo:
     """Information about a class"""
+
     name: str
-    bases: List[str] = field(default_factory=list)
-    methods: List[str] = field(default_factory=list)
+    bases: list[str] = field(default_factory=list)
+    methods: list[str] = field(default_factory=list)
     docstring: Optional[str] = None
     line_start: int = 0
     line_end: int = 0
-    attributes: List[str] = field(default_factory=list)
-    decorators: List[str] = field(default_factory=list)
+    attributes: list[str] = field(default_factory=list)
+    decorators: list[str] = field(default_factory=list)
 
 
 @dataclass
 class ImportInfo:
     """Information about an import"""
+
     module: str
-    names: List[str] = field(default_factory=list)
+    names: list[str] = field(default_factory=list)
     alias: Optional[str] = None
     is_from: bool = False
     line: int = 0
@@ -50,6 +53,7 @@ class ImportInfo:
 @dataclass
 class VariableInfo:
     """Information about a variable"""
+
     name: str
     value: Optional[str] = None
     line: int = 0
@@ -59,11 +63,12 @@ class VariableInfo:
 @dataclass
 class CodeStructure:
     """Complete structure of a code file"""
+
     file_path: str
-    imports: List[ImportInfo] = field(default_factory=list)
-    classes: List[ClassInfo] = field(default_factory=list)
-    functions: List[FunctionInfo] = field(default_factory=list)
-    variables: List[VariableInfo] = field(default_factory=list)
+    imports: list[ImportInfo] = field(default_factory=list)
+    classes: list[ClassInfo] = field(default_factory=list)
+    functions: list[FunctionInfo] = field(default_factory=list)
+    variables: list[VariableInfo] = field(default_factory=list)
     docstring: Optional[str] = None
     total_lines: int = 0
 
@@ -92,7 +97,7 @@ class CodeUnderstandingService:
         code = file_path.read_text()
         return ast.parse(code)
 
-    def extract_functions(self, file_path: Path) -> List[FunctionInfo]:
+    def extract_functions(self, file_path: Path) -> list[FunctionInfo]:
         """
         Extract function definitions from code
 
@@ -116,12 +121,16 @@ class CodeUnderstandingService:
                     docstring=ast.get_docstring(node),
                     is_async=isinstance(node, ast.AsyncFunctionDef),
                     is_method=self._is_method(node, tree),
-                    decorators=[d.id if isinstance(d, ast.Name) else str(d) for d in node.decorator_list],
+                    decorators=[
+                        d.id if isinstance(d, ast.Name) else str(d) for d in node.decorator_list
+                    ],
                 )
 
                 # Get return annotation
                 if node.returns:
-                    func_info.returns = ast.unparse(node.returns) if hasattr(ast, 'unparse') else str(node.returns)
+                    func_info.returns = (
+                        ast.unparse(node.returns) if hasattr(ast, "unparse") else str(node.returns)
+                    )
 
                 functions.append(func_info)
 
@@ -136,7 +145,7 @@ class CodeUnderstandingService:
                         return True
         return False
 
-    def extract_classes(self, file_path: Path) -> List[ClassInfo]:
+    def extract_classes(self, file_path: Path) -> list[ClassInfo]:
         """
         Extract class definitions from code
 
@@ -159,7 +168,9 @@ class CodeUnderstandingService:
                     docstring=ast.get_docstring(node),
                     line_start=node.lineno,
                     line_end=node.end_lineno or node.lineno,
-                    decorators=[d.id if isinstance(d, ast.Name) else str(d) for d in node.decorator_list],
+                    decorators=[
+                        d.id if isinstance(d, ast.Name) else str(d) for d in node.decorator_list
+                    ],
                 )
 
                 # Extract class attributes
@@ -183,7 +194,7 @@ class CodeUnderstandingService:
             return self._get_name(node.value)
         return str(node)
 
-    def get_file_structure(self, file_path: Path) -> Dict[str, Any]:
+    def get_file_structure(self, file_path: Path) -> dict[str, Any]:
         """
         Get complete structure of a Python file
 
@@ -196,7 +207,7 @@ class CodeUnderstandingService:
         logger.info("Getting file structure", file_path=str(file_path))
         tree = self.parse_python_code(file_path)
 
-        structure: Dict[str, Any] = {
+        structure: dict[str, Any] = {
             "classes": [],
             "functions": [],
             "imports": [],
@@ -248,7 +259,7 @@ class CodeUnderstandingService:
 
         return structure
 
-    def _extract_variables(self, tree: ast.AST) -> List[VariableInfo]:
+    def _extract_variables(self, tree: ast.AST) -> list[VariableInfo]:
         """Extract module-level variables"""
         variables = []
 
@@ -261,13 +272,13 @@ class CodeUnderstandingService:
                             line=node.lineno,
                             scope="module",
                         )
-                        if hasattr(ast, 'unparse'):
+                        if hasattr(ast, "unparse"):
                             var_info.value = ast.unparse(node.value)
                         variables.append(var_info)
 
         return variables
 
-    def get_imports(self, file_path: Path) -> List[ImportInfo]:
+    def get_imports(self, file_path: Path) -> list[ImportInfo]:
         """
         Get all imports from a file
 
@@ -283,25 +294,29 @@ class CodeUnderstandingService:
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
-                    imports.append(ImportInfo(
-                        module=alias.name,
-                        names=[alias.name],
-                        alias=alias.asname,
-                        is_from=False,
-                        line=node.lineno,
-                    ))
+                    imports.append(
+                        ImportInfo(
+                            module=alias.name,
+                            names=[alias.name],
+                            alias=alias.asname,
+                            is_from=False,
+                            line=node.lineno,
+                        )
+                    )
             elif isinstance(node, ast.ImportFrom):
                 names = [alias.name for alias in node.names]
-                imports.append(ImportInfo(
-                    module=node.module or "",
-                    names=names,
-                    is_from=True,
-                    line=node.lineno,
-                ))
+                imports.append(
+                    ImportInfo(
+                        module=node.module or "",
+                        names=names,
+                        is_from=True,
+                        line=node.lineno,
+                    )
+                )
 
         return imports
 
-    def analyze_dependencies(self, file_path: Path) -> Set[str]:
+    def analyze_dependencies(self, file_path: Path) -> set[str]:
         """
         Analyze dependencies of a file
 
@@ -325,7 +340,7 @@ class CodeUnderstandingService:
 
         return dependencies
 
-    def find_symbol_definition(self, file_path: Path, symbol_name: str) -> Optional[Dict[str, Any]]:
+    def find_symbol_definition(self, file_path: Path, symbol_name: str) -> Optional[dict[str, Any]]:
         """
         Find the definition of a symbol
 
@@ -346,7 +361,10 @@ class CodeUnderstandingService:
                     "line": node.lineno,
                     "docstring": ast.get_docstring(node),
                 }
-            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == symbol_name:
+            elif (
+                isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name == symbol_name
+            ):
                 return {
                     "name": node.name,
                     "type": "function",
@@ -379,7 +397,10 @@ class CodeUnderstandingService:
         complexity = 1  # Base complexity
 
         for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == function_name:
+            if (
+                isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name == function_name
+            ):
                 # Count decision points
                 for child in ast.walk(node):
                     if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
@@ -396,7 +417,7 @@ class CodeUnderstandingService:
 
         return complexity
 
-    def extract_docstrings(self, file_path: Path) -> List[str]:
+    def extract_docstrings(self, file_path: Path) -> list[str]:
         """
         Extract all docstrings from a file
 
@@ -422,7 +443,7 @@ class CodeUnderstandingService:
 
         return docstrings
 
-    def get_call_graph(self, file_path: Path) -> Dict[str, List[str]]:
+    def get_call_graph(self, file_path: Path) -> dict[str, list[str]]:
         """
         Build a simple call graph
 
@@ -433,7 +454,7 @@ class CodeUnderstandingService:
             Dictionary mapping function names to their called functions
         """
         tree = self.parse_python_code(file_path)
-        call_graph: Dict[str, List[str]] = {}
+        call_graph: dict[str, list[str]] = {}
 
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -448,7 +469,7 @@ class CodeUnderstandingService:
 
         return call_graph
 
-    def find_usages(self, file_path: Path, symbol_name: str) -> List[Dict[str, Any]]:
+    def find_usages(self, file_path: Path, symbol_name: str) -> list[dict[str, Any]]:
         """
         Find usages of a symbol in the file
 
@@ -464,16 +485,20 @@ class CodeUnderstandingService:
 
         for node in ast.walk(tree):
             if isinstance(node, ast.Name) and node.id == symbol_name:
-                usages.append({
-                    "line": node.lineno,
-                    "col": node.col_offset,
-                    "context": "reference",
-                })
+                usages.append(
+                    {
+                        "line": node.lineno,
+                        "col": node.col_offset,
+                        "context": "reference",
+                    }
+                )
             elif isinstance(node, ast.Attribute) and node.attr == symbol_name:
-                usages.append({
-                    "line": node.lineno,
-                    "col": node.col_offset,
-                    "context": "attribute",
-                })
+                usages.append(
+                    {
+                        "line": node.lineno,
+                        "col": node.col_offset,
+                        "context": "attribute",
+                    }
+                )
 
         return usages

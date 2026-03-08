@@ -1,14 +1,13 @@
 """Tests for orchestrator layer"""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from agently.agents.base import AgentResult
 from agently.orchestrator.nexus import NexusOrchestrator
-from agently.orchestrator.planner import TaskPlanner, ExecutionPlan
+from agently.orchestrator.planner import ExecutionPlan, TaskPlanner
 from agently.orchestrator.scheduler import AgentScheduler
 from agently.orchestrator.state import StateManager
-from agently.orchestrator.workflow import WorkflowEngine, WorkflowDefinition
+from agently.orchestrator.workflow import WorkflowDefinition, WorkflowEngine
 
 
 class TestNexusOrchestrator:
@@ -26,7 +25,7 @@ class TestNexusOrchestrator:
         """Test processing a task through orchestrator"""
         orch = NexusOrchestrator()
 
-        with patch.object(orch.nexus, 'execute') as mock_exec:
+        with patch.object(orch.nexus, "execute") as mock_exec:
             mock_exec.return_value = AgentResult(success=True, data={"result": "done"})
 
             result = orch.process_task("test task")
@@ -46,8 +45,8 @@ class TestTaskPlanner:
         """Test creating execution plan"""
         planner = TaskPlanner()
 
-        with patch.object(planner, '_analyze_task') as mock_analyze:
-            with patch.object(planner, '_decompose_task') as mock_decompose:
+        with patch.object(planner, "_analyze_task") as mock_analyze:
+            with patch.object(planner, "_decompose_task") as mock_decompose:
                 mock_analyze.return_value = {"complexity": "low", "type": "code"}
                 mock_decompose.return_value = [{"step": 1, "agent": "code-generator"}]
 
@@ -136,7 +135,7 @@ class TestWorkflowEngine:
         engine = WorkflowEngine()
         workflow = WorkflowDefinition(steps=[{"action": "test"}])
 
-        with patch.object(engine, '_execute_step') as mock_step:
+        with patch.object(engine, "_execute_step") as mock_step:
             mock_step.return_value = {"success": True}
             result = engine.execute(workflow)
 

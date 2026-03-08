@@ -1,12 +1,11 @@
 """Tests for constraints module"""
 
-import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
-from agently.constraints.memory import MemoryLimiter, MemoryTracker
-from agently.constraints.timing import ResponseTimeMonitor, TimeoutManager
 from agently.constraints.concurrency import ConcurrencyLimiter, SessionManager
-from agently.constraints.security import SecurityManager, ResourceLimiter
+from agently.constraints.memory import MemoryLimiter, MemoryTracker
+from agently.constraints.security import ResourceLimiter, SecurityManager
+from agently.constraints.timing import ResponseTimeMonitor, TimeoutManager
 
 
 class TestMemoryLimiter:
@@ -27,13 +26,13 @@ class TestMemoryLimiter:
     def test_is_within_limit(self):
         """Test checking if within limit"""
         limiter = MemoryLimiter(max_mb=4096)
-        with patch.object(limiter, 'get_current_memory_mb', return_value=100):
+        with patch.object(limiter, "get_current_memory_mb", return_value=100):
             assert limiter.is_within_limit() is True
 
     def test_exceeds_limit(self):
         """Test when memory exceeds limit"""
         limiter = MemoryLimiter(max_mb=100)
-        with patch.object(limiter, 'get_current_memory_mb', return_value=150):
+        with patch.object(limiter, "get_current_memory_mb", return_value=150):
             assert limiter.is_within_limit() is False
 
 
@@ -85,6 +84,7 @@ class TestResponseTimeMonitor:
     def test_get_average_response_time(self):
         """Test getting average response time"""
         from agently.constraints.timing import TimingMeasurement
+
         monitor = ResponseTimeMonitor()
         monitor.measurements = [
             TimingMeasurement(task="t1", duration_seconds=1.0),

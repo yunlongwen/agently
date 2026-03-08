@@ -1,13 +1,13 @@
 """State manager for orchestrator"""
 
-from typing import Any, Dict
+from typing import Any
 
 
 class StateManager:
     """Manages global and session state"""
 
     def __init__(self):
-        self.global_state: Dict[str, Any] = {}
+        self.global_state: dict[str, Any] = {}
 
     def set_state(self, key: str, value: Any) -> None:
         """Set state value
@@ -29,7 +29,7 @@ class StateManager:
         """
         return self.global_state.get(key)
 
-    def update_state(self, key: str, value: Dict[str, Any]) -> None:
+    def update_state(self, key: str, value: dict[str, Any]) -> None:
         """Update nested state
 
         Args:

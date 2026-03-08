@@ -1,10 +1,9 @@
 """Tests for LangChain integration"""
 
 import os
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from agently.core.llm_service import LLMService, LLMConfig, ChatMessage
+from agently.core.llm_service import ChatMessage, LLMConfig, LLMService
 
 
 class TestLLMConfig:
@@ -20,10 +19,7 @@ class TestLLMConfig:
     def test_custom_config(self):
         """Test custom configuration"""
         config = LLMConfig(
-            provider="anthropic",
-            model="claude-3-opus-20240229",
-            temperature=0.5,
-            max_tokens=2000
+            provider="anthropic", model="claude-3-opus-20240229", temperature=0.5, max_tokens=2000
         )
         assert config.provider == "anthropic"
         assert config.model == "claude-3-opus-20240229"
@@ -123,8 +119,7 @@ class TestLLMService:
                 mock_emb.return_value = MagicMock()
                 service = LLMService(config=config)
                 response = service.chat(
-                    "Generate a function",
-                    system_prompt="You are a code generator"
+                    "Generate a function", system_prompt="You are a code generator"
                 )
                 assert response is not None
 
@@ -134,11 +129,13 @@ class TestLLMService:
         with patch("agently.core.llm_service.ChatOpenAI") as mock_chat:
             mock_instance = MagicMock()
             mock_chat.return_value = mock_instance
-            mock_instance.stream.return_value = iter([
-                MagicMock(content="Hello"),
-                MagicMock(content=" world"),
-                MagicMock(content="!"),
-            ])
+            mock_instance.stream.return_value = iter(
+                [
+                    MagicMock(content="Hello"),
+                    MagicMock(content=" world"),
+                    MagicMock(content="!"),
+                ]
+            )
             with patch("agently.core.llm_service.OpenAIEmbeddings") as mock_emb:
                 mock_emb.return_value = MagicMock()
                 service = LLMService(config=config)

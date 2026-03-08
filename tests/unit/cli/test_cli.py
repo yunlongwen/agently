@@ -1,9 +1,7 @@
 """Tests for CLI"""
 
+from agently.cli.main import cli
 from click.testing import CliRunner
-import pytest
-
-from agently.cli.main import cli, main
 
 
 class TestCLI:

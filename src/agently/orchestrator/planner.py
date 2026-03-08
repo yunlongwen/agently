@@ -1,13 +1,14 @@
 """Task planner for orchestrator"""
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
 class ExecutionPlan:
     """Execution plan with tasks"""
-    tasks: List[Dict[str, Any]] = field(default_factory=list)
+
+    tasks: list[dict[str, Any]] = field(default_factory=list)
     status: str = "pending"
 
     def mark_complete(self) -> None:
@@ -31,7 +32,7 @@ class TaskPlanner:
         tasks = self._decompose_task(task, analysis)
         return ExecutionPlan(tasks=tasks)
 
-    def _analyze_task(self, task: str) -> Dict[str, Any]:
+    def _analyze_task(self, task: str) -> dict[str, Any]:
         """Analyze task complexity and type
 
         Args:
@@ -44,9 +45,7 @@ class TaskPlanner:
         task_type = "code" if "code" in task.lower() else "general"
         return {"complexity": complexity, "type": task_type}
 
-    def _decompose_task(
-        self, task: str, analysis: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+    def _decompose_task(self, task: str, analysis: dict[str, Any]) -> list[dict[str, Any]]:
         """Decompose task into steps
 
         Args:

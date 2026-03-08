@@ -2,7 +2,7 @@
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing import Any
 
 
 class SecurityManager:
@@ -18,7 +18,7 @@ class SecurityManager:
             r">\s*/dev/sd",
         ]
 
-    def validate_command(self, command: str) -> Dict[str, Any]:
+    def validate_command(self, command: str) -> dict[str, Any]:
         """Validate a shell command
 
         Args:
@@ -51,7 +51,7 @@ class SecurityManager:
 class ResourceLimiter:
     """Limits resource usage"""
 
-    limits: Dict[str, Any] = field(
+    limits: dict[str, Any] = field(
         default_factory=lambda: {
             "cpu_percent": 80.0,
             "memory_mb": 4096,
@@ -69,7 +69,7 @@ class ResourceLimiter:
         """
         self.limits[resource] = value
 
-    def check_resource(self, resource: str, current_value: Any) -> Dict[str, Any]:
+    def check_resource(self, resource: str, current_value: Any) -> dict[str, Any]:
         """Check if resource usage is within limit
 
         Args:

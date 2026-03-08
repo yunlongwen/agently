@@ -1,8 +1,8 @@
 """Nexus orchestrator - main orchestrator implementation"""
 
-from typing import Any, Dict
+from typing import Any
 
-from agently.agents.base import AgentContext, AgentResult
+from agently.agents.base import AgentContext
 from agently.agents.nexus import NexusAgent
 from agently.orchestrator.planner import TaskPlanner
 from agently.orchestrator.scheduler import AgentScheduler
@@ -20,7 +20,7 @@ class NexusOrchestrator:
         self.state_manager = StateManager()
         self.workflow_engine = WorkflowEngine()
 
-    def process_task(self, task: str) -> Dict[str, Any]:
+    def process_task(self, task: str) -> dict[str, Any]:
         """Process a task through the orchestrator
 
         Args:

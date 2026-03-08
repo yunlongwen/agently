@@ -1,6 +1,5 @@
 """Tests for logging configuration"""
 
-
 from agently.config import Settings, reset_settings
 from agently.logging import LoggingMixin, configure_logging, get_logger
 

@@ -1,6 +1,6 @@
 """Specialist agents for specific tasks"""
 
-from typing import Any, Dict
+from typing import Any
 
 from agently.agents.base import AgentContext, AgentResult, BaseAgent
 
@@ -27,7 +27,7 @@ class RequirementsAnalyzerAgent(BaseAgent):
         result = self._analyze(context.task)
         return AgentResult(success=True, data=result)
 
-    def _analyze(self, task: str) -> Dict[str, Any]:
+    def _analyze(self, task: str) -> dict[str, Any]:
         """Analyze task requirements
 
         Args:
@@ -61,7 +61,7 @@ class CodeGeneratorAgent(BaseAgent):
         result = self._generate(context.task)
         return AgentResult(success=True, data=result)
 
-    def _generate(self, task: str) -> Dict[str, Any]:
+    def _generate(self, task: str) -> dict[str, Any]:
         """Generate code from task
 
         Args:

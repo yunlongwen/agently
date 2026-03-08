@@ -1,22 +1,24 @@
 """Base agent classes and interfaces"""
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 @dataclass
 class AgentContext:
     """Context for agent execution"""
+
     task: str
-    context: Dict[str, Any] = field(default_factory=dict)
-    history: List[Dict[str, Any]] = field(default_factory=list)
+    context: dict[str, Any] = field(default_factory=dict)
+    history: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
 class AgentResult:
     """Result from agent execution"""
+
     success: bool
-    data: Dict[str, Any] = field(default_factory=dict)
+    data: dict[str, Any] = field(default_factory=dict)
     error: Optional[str] = None
 
 
@@ -27,7 +29,7 @@ class BaseAgent:
         self,
         name: str,
         description: str,
-        capabilities: Optional[List[str]] = None,
+        capabilities: Optional[list[str]] = None,
     ):
         self.name = name
         self.description = description

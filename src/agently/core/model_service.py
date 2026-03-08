@@ -1,7 +1,7 @@
 """Model service for AI model integration"""
 
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from agently.config import Settings
 from agently.logging import LoggingMixin
@@ -14,7 +14,7 @@ class OpenAIChat:
         self.api_key = api_key
         self.model = model
 
-    def complete(self, prompt: str) -> Dict[str, Any]:
+    def complete(self, prompt: str) -> dict[str, Any]:
         """Get completion
 
         Args:
@@ -33,7 +33,7 @@ class AnthropicChat:
         self.api_key = api_key
         self.model = model
 
-    def complete(self, prompt: str) -> Dict[str, Any]:
+    def complete(self, prompt: str) -> dict[str, Any]:
         """Get completion
 
         Args:
@@ -75,22 +75,28 @@ class ModelService(LoggingMixin):
         if model_provider == "openai":
             api_key = self.settings.openai_api_key
             if not api_key:
-                raise ValueError("OpenAI API key not configured. Set AGENTLY_OPENAI_API_KEY environment variable")
+                raise ValueError(
+                    "OpenAI API key not configured. Set AGENTLY_OPENAI_API_KEY environment variable"
+                )
             return api_key
         elif model_provider == "anthropic":
             api_key = self.settings.anthropic_api_key
             if not api_key:
-                raise ValueError("Anthropic API key not configured. Set AGENTLY_ANTHROPIC_API_KEY environment variable")
+                raise ValueError(
+                    "Anthropic API key not configured. Set AGENTLY_ANTHROPIC_API_KEY environment variable"
+                )
             return api_key
         elif model_provider == "google":
             api_key = os.environ.get("AGENTLY_GOOGLE_API_KEY", "")
             if not api_key:
-                raise ValueError("Google API key not configured. Set AGENTLY_GOOGLE_API_KEY environment variable")
+                raise ValueError(
+                    "Google API key not configured. Set AGENTLY_GOOGLE_API_KEY environment variable"
+                )
             return api_key
         else:
             raise ValueError(f"Unsupported model provider: {model_provider}")
 
-    def get_chat_completion(self, prompt: str) -> Optional[Dict[str, Any]]:
+    def get_chat_completion(self, prompt: str) -> Optional[dict[str, Any]]:
         """Get chat completion from LLM
 
         Args:
@@ -104,7 +110,7 @@ class ModelService(LoggingMixin):
         model = OpenAIChat(api_key=api_key)
         return model.complete(prompt)
 
-    def get_embedding(self, text: str) -> Optional[List[float]]:
+    def get_embedding(self, text: str) -> Optional[list[float]]:
         """Get text embedding from LLM
 
         Args:
@@ -113,12 +119,14 @@ class ModelService(LoggingMixin):
         Returns:
             Embedding vector or None if failed
         """
-        api_key = self._get_api_key("openai")
+        self._get_api_key("openai")
         self.logger.info("Getting embedding", text=text[:50])
         # Mock implementation
         return [0.1, 0.2, 0.3]
 
-    def get_chat_completion_by_provider(self, prompt: str, model_provider: str = "openai") -> Optional[str]:
+    def get_chat_completion_by_provider(
+        self, prompt: str, model_provider: str = "openai"
+    ) -> Optional[str]:
         """Get chat completion from specific provider
 
         Args:
@@ -128,7 +136,7 @@ class ModelService(LoggingMixin):
         Returns:
             Model response or None if failed
         """
-        api_key = self._get_api_key(model_provider)
+        self._get_api_key(model_provider)
         self.logger.info("Using provider", provider=model_provider)
 
         # Mock implementation

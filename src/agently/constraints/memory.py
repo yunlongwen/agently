@@ -1,13 +1,14 @@
 """Memory constraint management"""
 
 import os
-from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class MemorySnapshot:
     """Memory usage snapshot"""
+
     timestamp: float
     memory_mb: float
     label: str = ""
@@ -19,7 +20,7 @@ class MemoryLimiter:
     def __init__(self, max_mb: int = 4096):
         self.max_mb = max_mb
 
-    def check_memory(self) -> Dict[str, Any]:
+    def check_memory(self) -> dict[str, Any]:
         """Check current memory usage
 
         Returns:
@@ -59,7 +60,7 @@ class MemoryTracker:
     """Tracks memory usage over time"""
 
     def __init__(self):
-        self.snapshots: List[MemorySnapshot] = []
+        self.snapshots: list[MemorySnapshot] = []
 
     def take_snapshot(self, label: str = "") -> None:
         """Take a memory snapshot
@@ -77,7 +78,7 @@ class MemoryTracker:
         )
         self.snapshots.append(snapshot)
 
-    def get_usage_trend(self) -> Dict[str, Any]:
+    def get_usage_trend(self) -> dict[str, Any]:
         """Get memory usage trend
 
         Returns:

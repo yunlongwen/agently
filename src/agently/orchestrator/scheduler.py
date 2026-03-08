@@ -1,6 +1,6 @@
 """Agent scheduler for orchestrator"""
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from agently.agents.base import BaseAgent
 
@@ -9,7 +9,7 @@ class AgentScheduler:
     """Schedules and manages agents"""
 
     def __init__(self):
-        self.agents: Dict[str, BaseAgent] = {}
+        self.agents: dict[str, BaseAgent] = {}
 
     def register_agent(self, agent: BaseAgent) -> None:
         """Register an agent
@@ -19,9 +19,7 @@ class AgentScheduler:
         """
         self.agents[agent.name] = agent
 
-    def schedule_agent(
-        self, capability: str, context: Dict[str, Any]
-    ) -> Optional[BaseAgent]:
+    def schedule_agent(self, capability: str, context: dict[str, Any]) -> Optional[BaseAgent]:
         """Schedule appropriate agent for capability
 
         Args:
@@ -46,5 +44,5 @@ class AgentScheduler:
         Returns:
             True if agent can handle
         """
-        capabilities = getattr(agent, 'capabilities', [])
+        capabilities = getattr(agent, "capabilities", [])
         return capability in capabilities

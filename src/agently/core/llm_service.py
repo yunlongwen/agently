@@ -1,7 +1,8 @@
 """LLM Service - LangChain integration for AI model interaction"""
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, Iterator, List, Optional
+from collections.abc import Iterator
+from dataclasses import dataclass
+from typing import Any, Optional
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -15,6 +16,7 @@ logger = get_logger(__name__)
 @dataclass
 class LLMConfig:
     """Configuration for LLM service"""
+
     provider: str = "openai"
     model: str = "gpt-4"
     temperature: float = 0.7
@@ -27,11 +29,12 @@ class LLMConfig:
 @dataclass
 class ChatMessage:
     """Chat message"""
+
     role: str
     content: str
     name: Optional[str] = None
 
-    def to_dict(self) -> Dict[str, str]:
+    def to_dict(self) -> dict[str, str]:
         """Convert to dictionary format"""
         d = {"role": self.role, "content": self.content}
         if self.name:
@@ -86,6 +89,7 @@ class LLMService:
         elif self.config.provider == "anthropic":
             try:
                 from langchain_anthropic import ChatAnthropic
+
                 api_key = self.config.api_key or self.settings.anthropic_api_key
                 self._chat_model = ChatAnthropic(
                     model=self.config.model,
@@ -114,7 +118,7 @@ class LLMService:
     def chat(
         self,
         message: str,
-        history: Optional[List[ChatMessage]] = None,
+        history: Optional[list[ChatMessage]] = None,
         system_prompt: Optional[str] = None,
     ) -> str:
         """
@@ -157,7 +161,7 @@ class LLMService:
     def stream_chat(
         self,
         message: str,
-        history: Optional[List[ChatMessage]] = None,
+        history: Optional[list[ChatMessage]] = None,
         system_prompt: Optional[str] = None,
     ) -> Iterator[str]:
         """
@@ -186,7 +190,7 @@ class LLMService:
             if chunk.content:
                 yield chunk.content
 
-    def get_embedding(self, text: str) -> List[float]:
+    def get_embedding(self, text: str) -> list[float]:
         """
         Get embedding for text
 
@@ -201,7 +205,7 @@ class LLMService:
 
         return self._embeddings.embed_query(text)
 
-    def get_embeddings(self, texts: List[str]) -> List[List[float]]:
+    def get_embeddings(self, texts: list[str]) -> list[list[float]]:
         """
         Get embeddings for multiple texts
 
@@ -228,6 +232,7 @@ class LLMService:
         """
         try:
             from tiktoken import encoding_for_model
+
             encoding = encoding_for_model(self.config.model)
             return len(encoding.encode(text))
         except Exception:
@@ -246,7 +251,7 @@ class LLMService:
         """
         return self._chat_model.with_structured_output(schema)
 
-    def bind_tools(self, tools: List[Any]) -> Any:
+    def bind_tools(self, tools: list[Any]) -> Any:
         """
         Bind tools to the model
 

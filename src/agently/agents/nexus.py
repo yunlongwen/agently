@@ -1,6 +1,6 @@
 """Nexus orchestrator agent"""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from agently.agents.base import AgentContext, AgentResult, BaseAgent
 
@@ -14,7 +14,7 @@ class NexusAgent(BaseAgent):
             description="综合协调智能体，负责理解和分解任务，调度专业智能体执行",
             capabilities=["orchestration", "task-decomposition", "agent-coordination"],
         )
-        self.agents: Dict[str, BaseAgent] = {}
+        self.agents: dict[str, BaseAgent] = {}
 
     def register_agent(self, agent: BaseAgent) -> None:
         """Register a specialist agent

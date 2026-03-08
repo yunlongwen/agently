@@ -2,37 +2,41 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Optional
+
 import yaml
 
 
 @dataclass
 class SkillStep:
     """A single step in a skill"""
+
     name: str
     description: str
     action: str
-    parameters: Optional[Dict[str, Any]] = None
+    parameters: Optional[dict[str, Any]] = None
 
 
 @dataclass
 class SkillResult:
     """Result of skill execution"""
+
     success: bool
-    output: Dict[str, Any] = field(default_factory=dict)
+    output: dict[str, Any] = field(default_factory=dict)
     error: Optional[str] = None
-    step_results: List[Dict[str, Any]] = field(default_factory=list)
+    step_results: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
 class Skill:
     """A skill composed of multiple steps"""
+
     name: str
     description: str
-    steps: List[SkillStep] = field(default_factory=list)
+    steps: list[SkillStep] = field(default_factory=list)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Skill":
+    def from_dict(cls, data: dict[str, Any]) -> "Skill":
         """Create skill from dictionary
 
         Args:
@@ -56,7 +60,7 @@ class Skill:
             steps=steps,
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert skill to dictionary
 
         Returns:
@@ -89,7 +93,7 @@ class SkillRegistry:
     """Registry for skills"""
 
     def __init__(self):
-        self._skills: Dict[str, Skill] = {}
+        self._skills: dict[str, Skill] = {}
 
     def register(self, skill: Skill) -> None:
         """Register a skill
@@ -110,7 +114,7 @@ class SkillRegistry:
         """
         return self._skills.get(name)
 
-    def list_skills(self) -> List[str]:
+    def list_skills(self) -> list[str]:
         """List all registered skills
 
         Returns:
@@ -143,9 +147,7 @@ class SkillExecutor:
         self.skill_registry = skill_registry
         self.agent_executor = agent_executor
 
-    def execute(
-        self, skill_name: str, context: Optional[Dict[str, Any]] = None
-    ) -> SkillResult:
+    def execute(self, skill_name: str, context: Optional[dict[str, Any]] = None) -> SkillResult:
         """Execute a skill
 
         Args:
@@ -183,9 +185,7 @@ class SkillExecutor:
                 step_results=step_results,
             )
 
-    def _execute_step(
-        self, step: SkillStep, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def _execute_step(self, step: SkillStep, context: dict[str, Any]) -> dict[str, Any]:
         """Execute a single step
 
         Args:

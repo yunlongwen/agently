@@ -1,18 +1,17 @@
 """Tests for agents layer"""
 
-import pytest
 from unittest.mock import Mock, patch
 
-from agently.agents.base import BaseAgent, AgentContext, AgentResult
+from agently.agents.base import AgentContext, AgentResult, BaseAgent
 from agently.agents.nexus import NexusAgent
 from agently.agents.specialist import (
-    RequirementsAnalyzerAgent,
-    CodeGeneratorAgent,
-    CodeUnderstandingAgent,
     BugFixerAgent,
-    TesterAgent,
+    CodeGeneratorAgent,
     CodeReviewerAgent,
+    CodeUnderstandingAgent,
     GitManagerAgent,
+    RequirementsAnalyzerAgent,
+    TesterAgent,
 )
 
 
@@ -53,11 +52,7 @@ class TestAgentContext:
 
     def test_context_with_data(self):
         """Test context with additional data"""
-        context = AgentContext(
-            task="test task",
-            context={"key": "value"},
-            history=[{"step": 1}]
-        )
+        context = AgentContext(task="test task", context={"key": "value"}, history=[{"step": 1}])
         assert context.context["key"] == "value"
         assert len(context.history) == 1
 
@@ -109,7 +104,7 @@ class TestNexusAgent:
         nexus.register_agent(mock_agent)
 
         context = AgentContext(task="generate code for test")
-        with patch.object(nexus, '_select_agent', return_value=mock_agent):
+        with patch.object(nexus, "_select_agent", return_value=mock_agent):
             result = nexus.execute(context)
 
         assert result.success is True
@@ -129,7 +124,7 @@ class TestRequirementsAnalyzerAgent:
         agent = RequirementsAnalyzerAgent()
         context = AgentContext(task="analyze requirements for login feature")
 
-        with patch.object(agent, '_analyze', return_value={"requirements": ["req1"]}):
+        with patch.object(agent, "_analyze", return_value={"requirements": ["req1"]}):
             result = agent.execute(context)
 
         assert isinstance(result, AgentResult)
@@ -149,7 +144,7 @@ class TestCodeGeneratorAgent:
         agent = CodeGeneratorAgent()
         context = AgentContext(task="generate a function to add numbers")
 
-        with patch.object(agent, '_generate', return_value={"code": "def add(a, b): return a + b"}):
+        with patch.object(agent, "_generate", return_value={"code": "def add(a, b): return a + b"}):
             result = agent.execute(context)
 
         assert isinstance(result, AgentResult)

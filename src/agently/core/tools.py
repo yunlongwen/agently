@@ -2,17 +2,17 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Type
-import functools
+from typing import Any, Callable, Optional
 
 
 @dataclass
 class ToolResult:
     """Result of tool execution"""
+
     success: bool
     output: Any = None
     error: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 class BaseTool(ABC):
@@ -24,7 +24,7 @@ class BaseTool(ABC):
 
     name: str = ""
     description: str = ""
-    parameters: Dict[str, Any] = field(default_factory=dict)
+    parameters: dict[str, Any] = field(default_factory=dict)
 
     @abstractmethod
     def run(self, **kwargs) -> ToolResult:
@@ -38,7 +38,7 @@ class BaseTool(ABC):
         except Exception as e:
             return ToolResult(success=False, error=str(e))
 
-    def get_schema(self) -> Dict[str, Any]:
+    def get_schema(self) -> dict[str, Any]:
         """Get tool schema for LLM"""
         return {
             "name": self.name,
@@ -73,7 +73,7 @@ class FunctionTool(BaseTool):
         func: Callable,
         name: str,
         description: str,
-        parameters: Optional[Dict[str, Any]] = None,
+        parameters: Optional[dict[str, Any]] = None,
     ):
         self.func = func
         self.name = name
@@ -89,7 +89,7 @@ class FunctionTool(BaseTool):
 def tool(
     name: Optional[str] = None,
     description: Optional[str] = None,
-    parameters: Optional[Dict[str, Any]] = None,
+    parameters: Optional[dict[str, Any]] = None,
 ):
     """
     Decorator to create a tool from a function
@@ -102,6 +102,7 @@ def tool(
     Returns:
         Decorated function as a tool
     """
+
     def decorator(func: Callable) -> FunctionTool:
         tool_name = name or func.__name__
         tool_description = description or func.__doc__ or f"Tool: {tool_name}"
@@ -124,7 +125,7 @@ class ToolRegistry:
     """
 
     def __init__(self):
-        self._tools: Dict[str, BaseTool] = {}
+        self._tools: dict[str, BaseTool] = {}
 
     def register(self, tool: BaseTool) -> None:
         """Register a tool"""
@@ -139,15 +140,15 @@ class ToolRegistry:
         """Get a tool by name"""
         return self._tools.get(name)
 
-    def list_tools(self) -> List[str]:
+    def list_tools(self) -> list[str]:
         """List all registered tool names"""
         return list(self._tools.keys())
 
-    def get_all_schemas(self) -> List[Dict[str, Any]]:
+    def get_all_schemas(self) -> list[dict[str, Any]]:
         """Get schemas for all tools"""
         return [tool.get_schema() for tool in self._tools.values()]
 
-    def get_langchain_tools(self) -> List[Any]:
+    def get_langchain_tools(self) -> list[Any]:
         """Get all tools in LangChain format"""
         return [tool.to_langchain_tool() for tool in self._tools.values()]
 
@@ -165,7 +166,7 @@ class ToolExecutor:
 
     def __init__(self, registry: Optional[ToolRegistry] = None):
         self.registry = registry or ToolRegistry()
-        self.execution_history: List[Dict[str, Any]] = []
+        self.execution_history: list[dict[str, Any]] = []
 
     def execute(self, tool_name: str, **kwargs) -> ToolResult:
         """
@@ -189,17 +190,19 @@ class ToolExecutor:
         result = tool.safe_run(**kwargs)
 
         # Record execution
-        self.execution_history.append({
-            "tool": tool_name,
-            "parameters": kwargs,
-            "success": result.success,
-            "output": result.output if result.success else None,
-            "error": result.error if not result.success else None,
-        })
+        self.execution_history.append(
+            {
+                "tool": tool_name,
+                "parameters": kwargs,
+                "success": result.success,
+                "output": result.output if result.success else None,
+                "error": result.error if not result.success else None,
+            }
+        )
 
         return result
 
-    def get_history(self) -> List[Dict[str, Any]]:
+    def get_history(self) -> list[dict[str, Any]]:
         """Get execution history"""
         return self.execution_history.copy()
 
@@ -313,7 +316,7 @@ class ExecuteShellTool(BaseTool):
             return ToolResult(success=False, error=str(e))
 
 
-def get_default_tools() -> List[BaseTool]:
+def get_default_tools() -> list[BaseTool]:
     """Get list of default tools"""
     return [
         ReadFileTool(),

@@ -1,13 +1,12 @@
 """Tests for skill system"""
 
-import pytest
-from unittest.mock import Mock, patch
 from pathlib import Path
+from unittest.mock import Mock
 
 from agently.core.skills import (
     Skill,
-    SkillRegistry,
     SkillExecutor,
+    SkillRegistry,
     SkillResult,
     SkillStep,
 )
@@ -61,7 +60,7 @@ class TestSkillResult:
             step_results=[
                 {"step": "analyze", "result": "analyzed"},
                 {"step": "generate", "result": "generated"},
-            ]
+            ],
         )
         assert len(result.step_results) == 2
 
@@ -75,9 +74,13 @@ class TestSkill:
             name="code-generation",
             description="Generate code from requirements",
             steps=[
-                SkillStep(name="understand", description="Understand requirements", action="code-understander"),
+                SkillStep(
+                    name="understand",
+                    description="Understand requirements",
+                    action="code-understander",
+                ),
                 SkillStep(name="generate", description="Generate code", action="code-generator"),
-            ]
+            ],
         )
         assert skill.name == "code-generation"
         assert len(skill.steps) == 2
@@ -93,7 +96,7 @@ class TestSkill:
                     "description": "Analyze the bug",
                     "action": "bug-fixer",
                 }
-            ]
+            ],
         }
         skill = Skill.from_dict(data)
         assert skill.name == "bug-fix"
@@ -104,7 +107,7 @@ class TestSkill:
         skill = Skill(
             name="test-skill",
             description="Test",
-            steps=[SkillStep(name="step1", description="Step 1", action="test")]
+            steps=[SkillStep(name="step1", description="Step 1", action="test")],
         )
         d = skill.to_dict()
         assert d["name"] == "test-skill"
@@ -118,17 +121,13 @@ class TestSkill:
             steps=[
                 SkillStep(name="step1", description="Step 1", action="agent1"),
                 SkillStep(name="step2", description="Step 2", action="agent2"),
-            ]
+            ],
         )
         assert skill.validate() is True
 
     def test_invalid_skill_no_steps(self):
         """Test invalid skill with no steps"""
-        skill = Skill(
-            name="invalid-skill",
-            description="Invalid skill",
-            steps=[]
-        )
+        skill = Skill(name="invalid-skill", description="Invalid skill", steps=[])
         assert skill.validate() is False
 
 
@@ -141,7 +140,7 @@ class TestSkillRegistry:
         skill = Skill(
             name="test-skill",
             description="Test skill",
-            steps=[SkillStep(name="step1", description="Step", action="test")]
+            steps=[SkillStep(name="step1", description="Step", action="test")],
         )
         registry.register(skill)
         assert "test-skill" in registry.list_skills()
@@ -152,7 +151,7 @@ class TestSkillRegistry:
         skill = Skill(
             name="my-skill",
             description="My skill",
-            steps=[SkillStep(name="s1", description="S1", action="a1")]
+            steps=[SkillStep(name="s1", description="S1", action="a1")],
         )
         registry.register(skill)
 
@@ -174,7 +173,7 @@ class TestSkillRegistry:
             skill = Skill(
                 name=f"skill-{i}",
                 description=f"Skill {i}",
-                steps=[SkillStep(name="s", description="S", action="a")]
+                steps=[SkillStep(name="s", description="S", action="a")],
             )
             registry.register(skill)
 
@@ -209,19 +208,14 @@ class TestSkillExecutor:
         skill = Skill(
             name="simple-skill",
             description="Simple skill",
-            steps=[
-                SkillStep(name="step1", description="Step 1", action="test-agent")
-            ]
+            steps=[SkillStep(name="step1", description="Step 1", action="test-agent")],
         )
         registry.register(skill)
 
         # Mock agent executor
         mock_agent_executor = Mock(return_value={"result": "done"})
 
-        executor = SkillExecutor(
-            skill_registry=registry,
-            agent_executor=mock_agent_executor
-        )
+        executor = SkillExecutor(skill_registry=registry, agent_executor=mock_agent_executor)
 
         result = executor.execute("simple-skill", context={"input": "test"})
         assert result.success is True
@@ -243,7 +237,7 @@ class TestSkillExecutor:
             steps=[
                 SkillStep(name="s1", description="S1", action="a1"),
                 SkillStep(name="s2", description="S2", action="a2"),
-            ]
+            ],
         )
         registry.register(skill)
 
@@ -259,19 +253,14 @@ class TestSkillExecutor:
         skill = Skill(
             name="failing-skill",
             description="Skill that fails",
-            steps=[
-                SkillStep(name="fail-step", description="Will fail", action="fail-agent")
-            ]
+            steps=[SkillStep(name="fail-step", description="Will fail", action="fail-agent")],
         )
         registry.register(skill)
 
         def failing_executor(*args, **kwargs):
             raise Exception("Step failed")
 
-        executor = SkillExecutor(
-            skill_registry=registry,
-            agent_executor=failing_executor
-        )
+        executor = SkillExecutor(skill_registry=registry, agent_executor=failing_executor)
 
         result = executor.execute("failing-skill")
         assert result.success is False

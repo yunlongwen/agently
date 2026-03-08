@@ -2,12 +2,12 @@
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class TimingMeasurement:
     """Timing measurement record"""
+
     task: str
     duration_seconds: float
     timestamp: float = field(default_factory=time.time)
@@ -17,8 +17,8 @@ class ResponseTimeMonitor:
     """Monitors response times"""
 
     def __init__(self):
-        self.measurements: List[TimingMeasurement] = []
-        self.timers: Dict[str, float] = {}
+        self.measurements: list[TimingMeasurement] = []
+        self.timers: dict[str, float] = {}
 
     def start_timer(self, task: str) -> None:
         """Start a timer for a task
@@ -63,7 +63,7 @@ class TimeoutManager:
     """Manages timeouts for different task types"""
 
     def __init__(self):
-        self.timeouts: Dict[str, int] = {
+        self.timeouts: dict[str, int] = {
             "simple": 30,
             "medium": 60,
             "complex": 120,

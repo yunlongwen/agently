@@ -2,14 +2,13 @@
 
 import ast
 from pathlib import Path
-import pytest
-from unittest.mock import Mock, patch
 
+import pytest
 from agently.core.code_understanding import (
-    CodeUnderstandingService,
-    CodeStructure,
-    FunctionInfo,
     ClassInfo,
+    CodeStructure,
+    CodeUnderstandingService,
+    FunctionInfo,
     ImportInfo,
 )
 
@@ -100,14 +99,14 @@ from typing import List, Optional
 
 class Calculator:
     """A simple calculator"""
-    
+
     def __init__(self, name: str):
         self.name = name
-    
+
     def add(self, a: int, b: int) -> int:
         """Add two numbers"""
         return a + b
-    
+
     def multiply(self, a: int, b: int) -> int:
         """Multiply two numbers"""
         return a * b
@@ -161,7 +160,9 @@ CONSTANT = 42
         assert result["name"] == "Calculator"
         assert result["type"] == "class"
 
-    def test_find_symbol_definition_function(self, service: CodeUnderstandingService, sample_code: Path):
+    def test_find_symbol_definition_function(
+        self, service: CodeUnderstandingService, sample_code: Path
+    ):
         """Test finding function definition"""
         result = service.find_symbol_definition(sample_code, "calculate_sum")
         assert result is not None
@@ -198,7 +199,7 @@ CONSTANT = 42
         """Test parsing invalid Python code"""
         invalid_file = tmp_path / "invalid.py"
         invalid_file.write_text("def broken(:\n    pass")
-        
+
         with pytest.raises(SyntaxError):
             service.parse_python_code(invalid_file)
 
