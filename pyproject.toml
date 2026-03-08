@@ -182,6 +182,18 @@ module = "langchain.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = "langchain_core.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langchain_openai.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "langchain_anthropic.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = "psutil"
 ignore_missing_imports = true
 
@@ -196,6 +208,19 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = "pytest.*"
 ignore_errors = true
+
+# Ignore errors from third-party library type hints
+[[tool.mypy.overrides]]
+module = "agently.core.llm_service"
+disable_error_code = ["arg-type", "call-arg", "assignment", "attr-defined"]
+
+[[tool.mypy.overrides]]
+module = "agently.core.tools"
+disable_error_code = ["override"]
+
+[[tool.mypy.overrides]]
+module = "agently.core.code_understanding"
+disable_error_code = ["arg-type", "attr-defined"]
 
 # Pytest configuration
 [tool.pytest.ini_options]

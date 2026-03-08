@@ -209,10 +209,12 @@ class TreeSitterService:
                                     "name": name_node.text.decode("utf-8")
                                     if name_node.text
                                     else "",
-                                    "type": type_node.text.decode("utf-8")
-                                    if type_node and type_node.text
-                                    else None,
-                                    "default": True,
+                                    "type": (
+                                        type_node.text.decode("utf-8")
+                                        if type_node and type_node.text
+                                        else None
+                                    ),
+                                    "default": True,  # type: ignore[dict-item]
                                 }
                             )
                     elif param.type == "default_parameter":
@@ -228,7 +230,7 @@ class TreeSitterService:
                                     if name_node.text
                                     else "",
                                     "type": None,
-                                    "default": True,
+                                    "default": True,  # type: ignore[dict-item]
                                 }
                             )
                 break

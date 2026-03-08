@@ -1,0 +1,155 @@
+name: Build Multi-Platform Binaries
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v0.1.0)'
+        required: false
+        default: ''
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e .
+
+      - name: Build Windows executable
+        run: |
+          pyinstaller --onefile --name agently-windows-x64 `
+            --add-data "src/agently;agently" `
+            --hidden-import agently.cli `
+            --hidden-import agently.cli.main `
+            --hidden-import agently.cli.interactive `
+            --hidden-import agently.cli.logo `
+            --hidden-import prompt_toolkit `
+            --hidden-import click `
+            --hidden-import pydantic `
+            --hidden-import structlog `
+            --console `
+            src/agently/cli/__main__.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agently-windows-x64
+          path: dist/agently-windows-x64.exe
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: ${{ matrix.arch == 'arm64' && 'arm64' || 'x64' }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e .
+
+      - name: Build macOS executable
+        run: |
+          pyinstaller --onefile --name agently-macos-${{ matrix.arch }} \
+            --add-data "src/agently:agently" \
+            --hidden-import agently.cli \
+            --hidden-import agently.cli.main \
+            --hidden-import agently.cli.interactive \
+            --hidden-import agently.cli.logo \
+            --hidden-import prompt_toolkit \
+            --hidden-import click \
+            --hidden-import pydantic \
+            --hidden-import structlog \
+            --console \
+            src/agently/cli/__main__.py
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agently-macos-${{ matrix.arch }}
+          path: dist/agently-macos-${{ matrix.arch }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for ARM64)
+        if: matrix.arch == 'arm64'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -e .
+
+      - name: Build Linux executable
+        run: |
+          pyinstaller --onefile --name agently-linux-${{ matrix.arch }} \
+            --add-data "src/agently:agently" \
+            --hidden-import agently.cli \
+            --hidden-import agently.cli.main \
+            --hidden-import agently.cli.interactive \
+            --hidden-import agently.cli.logo \
+            --hidden-import prompt_toolkit \
+            --hidden-import click \
+            --hidden-import pydantic \
+            --hidden-import structlog \
+            --console \
+            src/agently/cli/__main__.py
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agently-linux-${{ matrix.arch }}
+          path: dist/agently-linux-${{ matrix.arch }}
+
+  upload-to-release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: agently-*
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

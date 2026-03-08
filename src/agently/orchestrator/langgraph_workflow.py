@@ -123,7 +123,11 @@ class LangGraphWorkflow:
             self._workflow.add_edge(from_node, to_node)
 
         for from_node, condition, mapping in self._conditional_edges:
-            self._workflow.add_conditional_edges(from_node, condition, mapping)
+            self._workflow.add_conditional_edges(
+                from_node,
+                condition,
+                mapping,  # type: ignore[arg-type]
+            )
 
         self._app = self._workflow.compile()
         logger.info("Workflow compiled successfully")
