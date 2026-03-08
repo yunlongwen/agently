@@ -4,6 +4,7 @@ import ast
 from pathlib import Path
 
 import pytest
+
 from agently.core.code_understanding import (
     ClassInfo,
     CodeStructure,

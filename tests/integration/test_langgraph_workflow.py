@@ -1,6 +1,7 @@
 """Tests for LangGraph workflow integration"""
 
 import pytest
+
 from agently.orchestrator.langgraph_workflow import (
     LangGraphWorkflow,
     WorkflowState,

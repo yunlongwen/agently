@@ -2,9 +2,10 @@
 
 from unittest.mock import patch
 
+from click.testing import CliRunner
+
 from agently.cli.logo import LogoRenderer
 from agently.cli.main import cli
-from click.testing import CliRunner
 
 
 class TestLogoRenderer:

@@ -4,8 +4,9 @@ import os
 from pathlib import Path
 
 import pytest
-from agently.config import Settings, get_settings, reset_settings
 from pydantic import ValidationError
+
+from agently.config import Settings, get_settings, reset_settings
 
 
 class TestSettings:
