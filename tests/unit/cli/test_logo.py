@@ -1,6 +1,5 @@
 """Tests for CLI Logo rendering"""
 
-
 from click.testing import CliRunner
 
 from agently.cli.logo import LogoRenderer
