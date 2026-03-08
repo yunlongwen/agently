@@ -1,6 +1,6 @@
 #!/bin/bash
 # Pre-push hook - runs before pushing to remote
-# This hook runs lint, format, and type checks before push
+# This hook runs lint, format, type checks, and tests before push
 
 set -e
 
@@ -47,6 +47,16 @@ python3 -m mypy src/agently || {
     echo "❌ Mypy type check failed!"
     echo ""
     echo "💡 Fix type errors in the files listed above."
+    exit 1
+}
+
+# Run tests
+echo "🧪 Running unit tests..."
+python3 -m pytest tests/unit/ --no-cov -q || {
+    echo ""
+    echo "❌ Unit tests failed!"
+    echo ""
+    echo "💡 Fix failing tests before pushing."
     exit 1
 }
 
